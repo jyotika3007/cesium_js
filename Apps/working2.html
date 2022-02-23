@@ -1,0 +1,421 @@
+<!-- <!DOCTYPE html> -->
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport"
+    content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no">
+    <title>Cesium Development | By DesCrip</title>
+
+
+    <!-- Latest compiled and minified CSS -->
+    <!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css"> -->
+
+    <!-- jQuery library -->
+    <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script> -->
+
+    <!-- Latest compiled JavaScript -->
+    <!-- <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script> -->
+
+
+    <!-- CAUTION: DO NOT CHANGE THE SEQUENCES OF LIBS  -->
+    <script type="text/javascript" src="../Build/Cesium/Cesium.js"></script>
+    <script type="text/javascript" src="CesiumPlugins/colorpicker/jquery-1.9.1.js"></script>
+    <script type="text/javascript" src="CesiumPlugins/colorpicker/jquery-ui-1.12.1.js"></script>
+    <script type="text/javascript" src="CesiumPlugins/colorpicker/jquery.colorpicker.bygiro.min.js"></script>
+    <script type="text/javascript" src="CesiumPlugins/CesiumGlobals.js"></script>
+    <script type="text/javascript" src="CesiumPlugins/viewerCesiumNavigationMixin.js"></script>
+    <script type="text/javascript" src="CesiumPlugins/cesium-measure.js"></script>
+    <script type="text/javascript" src="CesiumPlugins/CesiumMeasurer.js"></script>
+    <script type="text/javascript" src="CesiumPlugins/cesium-line-of-sight.js"></script>
+    <script type="text/javascript" src="CesiumPlugins/cesium-elevation-analysis.js"></script>
+    <script type="text/javascript" src="CesiumPlugins/cesium-imagery-adjustment.js"></script>
+    <script type="text/javascript" src="CesiumPlugins/cesium-viewshed.js"></script>
+    <script type="text/javascript" src="CesiumPlugins/cesium-radarshed.js"></script>
+    <script type="text/javascript" src="CesiumPlugins/cesium-watershed.js"></script>
+    <script type="text/javascript" src="CesiumPlugins/cesium-heightdepth-calc.js"></script>
+    <script type="text/javascript" src="CesiumPlugins/cesium-waypoints.js"></script>
+    <script type="text/javascript" src="CesiumPlugins/toolbarBinder.js"></script>
+    <script type="text/javascript" src="CesiumPlugins/mgrs_conversion.js"></script>
+    <script type="text/javascript" src="CesiumPlugins/cesium-minimap.js"></script>
+    <script type="text/javascript" src="CesiumPlugins/CesiumFirstPersonCameraController.js"></script>
+    <script type="text/javascript" src="CesiumPlugins/cloudpng.js"></script>
+    <script type="text/javascript" src="CesiumPlugins/groundSkyBox.js"></script>
+    <script type="text/javascript" src="CesiumPlugins/cesium-weathers.js"></script>
+    <script type="text/javascript" src="CesiumPlugins/cesium-weather.js"></script>
+    <!-- <script type="text/javascript" src="CesiumPlugins/CustomMaterials/trackingEffect.js"></script> -->
+    <script type="text/javascript" src="CesiumPlugins/CustomMaterials/CesiumCircleWaveMaterial.js"></script>
+    <script type="text/javascript" src="CesiumPlugins/CustomMaterials/PolylineTrailMaterialProperty.js"></script>
+    <script type="text/javascript" src="CesiumPlugins/echarts-en.common.js"></script>
+    <script type="text/javascript" src="CesiumPlugins/cesium-terrainprofiler.js"></script>
+    <script type="text/javascript" src="CesiumPlugins/globalsearchbar.js"></script>
+    <script type="text/javascript" src="CesiumPlugins/toolbarsTemplatesLoader.js"></script>
+    <script type="text/javascript" src="CesiumPlugins/jquery.awesomereorder.js"></script>
+    <script type="text/javascript" src="CesiumPlugins/layersbar.js"></script>
+    <script type="text/javascript" src="CesiumPlugins/cesium-querycalculator.js"></script>
+
+    <!-- DRAWING TOOLS LIBS -->
+    <script type="text/javascript" src="CesiumPlugins/sensor.js"></script>
+    <script type="text/javascript" src="CesiumPlugins/drawingtools/turf/turf.min.js"></script>
+    <script type="text/javascript" src="CesiumPlugins/drawingtools/layui/layui.all.js"></script>
+    <script type="text/javascript" src="CesiumPlugins/drawingtools/plotUtil.js"></script>
+    <script type="text/javascript" src="CesiumPlugins/drawingtools/algorithm.js"></script>
+    <script type="text/javascript" src="CesiumPlugins/drawingtools/GlobeTooltip.js"></script>
+    <script type="text/javascript" src="CesiumPlugins/drawingtools/GlobePolygonDrawer.js"></script>
+    <script type="text/javascript" src="CesiumPlugins/drawingtools/GlobePolylineDrawer.js"></script>
+    <script type="text/javascript" src="CesiumPlugins/drawingtools/GlobeWallDrawer.js"></script>
+    <script type="text/javascript" src="CesiumPlugins/drawingtools/GlobeRectangleDrawer.js"></script>
+    <script type="text/javascript" src="CesiumPlugins/drawingtools/GlobeCircleDrawer.js"></script>
+    <script type="text/javascript" src="CesiumPlugins/drawingtools/GlobePointDrawer.js"></script>
+    <script type="text/javascript" src="CesiumPlugins/drawingtools/GlobeWeaponDrawer.js"></script>
+    <script type="text/javascript" src="CesiumPlugins/drawingtools/GlobeTextDrawer.js"></script>
+    <script type="text/javascript" src="CesiumPlugins/drawingtools/GlobeBufferLineDrawer.js"></script>
+    <script type="text/javascript" src="CesiumPlugins/drawingtools/GlobePointMeasure.js"></script>
+    <script type="text/javascript" src="CesiumPlugins/drawingtools/GlobePolylineSpaceMeasure.js"></script>
+    <script type="text/javascript" src="CesiumPlugins/drawingtools/GlobePolylineStickMeasure.js"></script>
+    <script type="text/javascript" src="CesiumPlugins/drawingtools/GlobePolygonMeasure.js"></script>
+    <script type="text/javascript" src="CesiumPlugins/drawingtools/PlotStraightArrowDrawer.js"></script>
+    <script type="text/javascript" src="CesiumPlugins/drawingtools/PlotAttackArrowDrawer.js"></script>
+    <script type="text/javascript" src="CesiumPlugins/drawingtools/PlotPincerArrowDrawer.js"></script>
+    <script type="text/javascript" src="CesiumPlugins/drawingtools/GlobeTracker.js"></script>
+    <script type="text/javascript" src="CesiumPlugins/drawingtools/PlotDrawIconsData.js"></script>
+    <script type="text/javascript" src="CesiumPlugins/drawingtools/weaponDeployer.js"></script>
+    <script type="text/javascript" src="CesiumPlugins/drawingtools/initDrawingTools.js"></script>
+    <!-- DRAWING TOOLS LIBS END -->
+    <!-- <script type="text/javascript" src="CesiumPlugins/jquery.dragon.js"></script> -->
+
+    <!-- Main Script (Call it at last) -->
+    <script type="text/javascript" src="CesiumPlugins/initcesium.js"></script>
+
+    <script type="text/javascript" src="CesiumPlugins/importExporter.js"></script>
+
+
+
+    <style>
+    @import url(CesiumPlugins/colorpicker/jquery-ui-1.12.1.css);
+    @import url(CesiumPlugins/colorpicker/jquery.colorpicker.bygiro.min.css);
+    @import url(../Build/Cesium/Widgets/widgets.css);
+    @import url(CesiumPlugins/DrawHelper.css);
+    @import url(CesiumPlugins/CesiumMeasurer.css);
+    @import url(CesiumPlugins/drawingtools/layui/css/layui.css);
+
+    html,
+    body,
+    #cesiumContainer {
+        top: 0px;
+        left: 0px;
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+        z-index: -1;
+    }
+</style>
+
+<style type="text/css">
+
+.queryCalculator, .queryCalculatorResult, #maxQCR{
+    display: none;
+}
+
+.queryCalculator{
+    position: absolute;
+    bottom: 3%;
+    right: 1%;
+    width: 30%;
+    padding: 25px 15px;
+    background-color: rgba(0,0,0,0.9);
+    border-radius: 5px;
+}
+.queryCalculatorResult {
+    position: absolute;
+    bottom: 3%;
+    right: 34%;
+    width: 62%;
+    padding: 25px 15px;
+    background-color: rgba(0,0,0,0.9);
+    border-radius: 5px;
+}
+
+.queryCalcHeader{
+    color: #fff;
+    font-weight: 800;
+    display: flex;
+}
+
+.queryCalcBody .row{
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    display: flex;
+}
+.queryCalcBody .col{
+    min-width:  33.32%;
+}
+.queryCalcBody textarea{
+    width: 100%;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    border-radius: 3px;
+    padding: 2px 7px;
+    font-size: 18px;
+    font-weight: bold;
+    text-transform: uppercase;
+    height:  70px;
+}
+
+.queryCalcBody .col select{    
+    width: 100%;
+    font-size: 18px;
+    border-radius: 3px;
+    margin-bottom: 10px;
+}
+
+.closeQueryCalc{
+    position: absolute;
+    right:  15px;
+    border-radius: 3px;
+    border: 1px solid #fff;
+    padding:  0 6px;
+    cursor:  pointer;
+}
+
+.minimizeQueryCalc{
+    position: absolute;
+    right:  41px;
+    border-radius: 3px;
+    border: 1px solid #fff;
+    padding:  0 8px;
+    cursor:  pointer;
+}
+
+.searchCalc{
+    background-color: green;
+    color: #fff;
+    border-radius: 3px;
+    border: 1px solid green;
+    padding: 5px 15px;
+    cursor: pointer;
+}
+
+.resetCalc{
+    background-color: gray;
+    color: #fff;
+    border-radius: 3px;
+    border: 1px solid gray;
+    padding: 5px 15px;
+    cursor: pointer;
+}
+
+.queryCalcResultBody .table{
+    background-color: #fff;
+    width: 100%;    
+    text-align: center;
+    margin-top: 10px;
+}
+
+.queryCalcResultBody .table thead{
+    border-bottom: 2px solid #000;
+    font-size: 16px;
+    background-color: gray;
+    font-weight: bold;
+    color:  #fff;
+}
+.queryCalcResultBody .table tbody{
+    font-size: 14px;
+}
+.queryCalcResultBody .table th, .queryCalcResultBody .table td{
+    padding:  5px;
+}
+.queryCalcResultBody .table tr{
+    padding:  5px;
+        border-bottom: 1px solid #eee;
+}
+
+
+
+</style>
+</head>
+
+
+<body oncontextmenu="return false;">
+    <div id="cesiumContainer"></div>
+
+    <div class="queryCalculator" id="queryCalculator">
+
+        <div class="queryCalcHeader">
+            <h3>Query Calculator</h3>
+            <div class="closeQueryCalc" onclick="closeQCR()">&times;</div>
+        </div>
+
+        <div class="queryCalcBody">
+            
+            <div class="row">
+                <textarea readonly> First Select an area on map</textarea>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <select>
+                        <option>Select Entity</option>
+                        <option>Select Entity</option>
+                        <option>Select Entity</option>
+                    </select>
+                </div>
+                <div class="col">
+                    <select>
+                        <option>Select Attribute</option>
+                        <option>Select Attribute</option>
+                        <option>Select Attribute</option>
+                    </select>
+                </div>
+
+                <div class="col">
+                    <select>
+                        <option>Select Data</option>
+                        <option>Select Data</option>
+                        <option>Select Data</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="row">
+                <div>
+                    <button type="button" class="searchCalc" onclick="openQCR()">Search</button>
+                    <button type="button" class="resetCalc">Reset</button>
+                </div>
+            </div>
+
+        </div>
+    </div>  
+
+    <div class="queryCalculatorResult" id="queryCalculatorResult">
+        
+        <div class="queryCalcHeader">
+            <h3>Query Calculator Result</h3>
+            <div class="minimizeQueryCalc" id="minQCR" onclick="minimizeQCR()">-</div>
+            <div class="minimizeQueryCalc" id="maxQCR" onclick="maximizeQCR()">+</div>
+            <div class="closeQueryCalc" onclick="closeQCR()">&times;</div>
+        </div>
+
+        <div class="queryCalcResultBody">
+            
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>*</th>
+                        <th>Col 1</th>
+                        <th>Col 2</th>
+                        <th>col 3</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>*</td>
+                        <td>Col 1</td>
+                        <td>Col 2</td>
+                        <td>col 3</td>
+                    </tr><tr>
+                        <td>*</td>
+                        <td>Col 1</td>
+                        <td>Col 2</td>
+                        <td>col 3</td>
+                    </tr><tr>
+                        <td>*</td>
+                        <td>Col 1</td>
+                        <td>Col 2</td>
+                        <td>col 3</td>
+                    </tr><tr>
+                        <td>*</td>
+                        <td>Col 1</td>
+                        <td>Col 2</td>
+                        <td>col 3</td>
+                    </tr>
+                </tbody>
+            </table>
+
+        </div>
+    </div>  
+
+    <script>
+        var _default_cam_location = { //Default CAM Location
+            lon: 83.552,
+            lat: 30.328,
+            alt: 6412134
+        };
+        /* ONLINE STARTED HERE*/
+        let worldTerrain = Cesium.createWorldTerrain({
+            requestWaterMask: true,
+            requestVertexNormals: true
+        });
+
+        var viewer = new Cesium.Viewer('cesiumContainer', {
+            requestRenderMode: true, //remove this line if animation not working properly
+            imageryProvider: Cesium.createWorldImagery({
+                style: Cesium.IonWorldImageryStyle.AERIAL_WITH_LABELS
+            }),
+
+            // imageryProvider: new Cesium.OpenStreetMapImageryProvider({
+            //         url: Cesium.buildModuleUrl('Assets/Textures/test'),// + '/{z}/{x}/{reverseY}.jpg',
+            //         fileExtension: 'png',
+            //         //tilingScheme : new Cesium.GeographicTilingScheme(),
+            //     }),
+
+            terrainProvider: worldTerrain,
+            navigationHelpButton: false,
+            baseLayerPicker: true,
+            geocoder: true,
+            timeline: false,
+            //shadows: true,
+            shouldAnimate: true,
+            terrainShadows: Cesium.ShadowMode.ENABLED,
+            infoBox: false,
+            selectionIndicater: false,
+            // mapProjection: new Cesium.WebMercatorProjection(),
+            credits: false
+        });
+        /* ONLINE ENDED HERE*/
+
+        //CesiumMiniMap(viewer); //Mini map implementation (will do it in future)
+
+        /* OFFLINE STARTED HERE*/
+        
+            // Cesium.Ion.defaultAccesToken = null;
+            // // let terrainProvider = new Cesium.CesiumTerrainProvider({
+            // //     url: 'http://localhost:9090/tilesets/tiles/'
+            // // });
+            // var viewer = new Cesium.Viewer('cesiumContainer', {
+            //     requestRenderMode: true,
+            //     imageryProvider: new Cesium.OpenStreetMapImageryProvider({
+            //         url: Cesium.buildModuleUrl('Assets/Textures/test'),// + '/{z}/{x}/{reverseY}.jpg',
+            //         fileExtension: 'png',
+            //         //tilingScheme : new Cesium.GeographicTilingScheme(),
+            //     }),
+            //     // terrainProvider: terrainProvider,
+            //     navigationHelpButton: false,
+            //     baseLayerPicker: false,
+            //     geocoder: true,
+            //     timeline: false,
+            //     //shadows: true,
+            //     shouldAnimate: true,
+            //     terrainShadows: Cesium.ShadowMode.ENABLED,
+            //     infoBox: false,
+            //     selectionIndicater : false,
+            //     // mapProjection: new Cesium.WebMercatorProjection(),
+            //     credits: false
+            // });
+            /* OFFLINE ENDED HERE*/
+
+
+            function _getShapeGeometryData(_gdata) {
+                console.log(_gdata)
+            }
+
+        </script>
+
+
+    </body>
+
+    </html>

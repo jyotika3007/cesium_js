@@ -1,0 +1,2312 @@
+<!-- <!DOCTYPE html> -->
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no">
+    <title>Cesium Development | By Developer</title>
+    <!-- <script src="jquery-3.1.1.min.js"></script> -->
+    <script src="CesiumPlugins/colorpicker/jquery-1.9.1.js"></script>
+    <script src="CesiumPlugins/colorpicker/jquery-ui-1.12.1.js"></script>
+    <script src="CesiumPlugins/colorpicker/jquery.colorpicker.bygiro.min.js"></script>
+    <script src="../Build/Cesium/Cesium.js"></script>
+    <script src="CesiumPlugins/CesiumGlobals.js"></script>
+    <script src="CesiumPlugins/viewerCesiumNavigationMixin.js"></script>
+    <script src="CesiumPlugins/cesium-measure.js"></script>
+    <script src="CesiumPlugins/CesiumMeasurer.js"></script>
+    <script src="CesiumPlugins/cesium-line-of-sight.js"></script>
+    <script src="CesiumPlugins/cesium-elevation-analysis.js"></script>
+    <script src="CesiumPlugins/cesium-imagery-adjustment.js"></script>
+    <script src="CesiumPlugins/cesium-viewshed.js"></script>
+    <script src="CesiumPlugins/createDraggables.js"></script>
+    <script src="CesiumPlugins/toolbarBinder.js"></script>
+    <script src="CesiumPlugins/mgrs_conversion.js"></script> <!-- var deg = MGRSString(lat,long); -->
+    <script src="CesiumPlugins/cesium-minimap.js"></script>
+    <script src="CesiumPlugins/CesiumFirstPersonCameraController.js"></script>
+    <script src="CesiumPlugins/cesium-weather.js"></script>
+
+
+    <!-- <script src="CesiumPlugins/DrawHelper.js"></script> -->
+    <!-- <script src="CesiumPlugins/cesium-das/das3d.js"></script> -->
+    <!-- <script src="require.js"></script>
+    <script src="../Source/Scene/CustomSensorVolume.js"></script> -->
+
+
+    <style>
+        @import url(colorpicker/jquery-ui.css);
+        @import url(colorpicker/jquery.colorpicker.css);
+        @import url(../Build/Cesium/Widgets/widgets.css);
+        @import url(DrawHelper.css);
+        /* @import url(CesiumPlugins/DrawHelper.css); */
+        @import url(CesiumPlugins/cesium-minimap.css);
+        @import url(CesiumPlugins/CesiumMeasurer.css);
+        /* @import url(CesiumPlugins/cesium-das/das3d.css); */
+
+
+        /*html, body, #cesiumContainer {*/
+        /*width: 100%; height: 100%; margin: 0; padding: 0; overflow: hidden;*/
+        /*}*/
+        html,
+        body,
+        #cesiumContainer {
+            top: 0px;
+            left: 0px;
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            z-index: -1;
+        }
+
+        .cesium-viewer-bottom,
+        .cesium-viewer-animationContainer,
+        .cesium-viewer-timelineContainer {
+            visibility: hidden;
+        }
+
+        #uiMenu {
+            border-radius: 5px;
+            padding: 5px;
+            position: absolute;
+            left: 50px;
+            font-family: "Arial";
+            z-index: 99980;
+        }
+
+        .citydb_overSelect {
+            position: absolute;
+            left: 0;
+            right: 0;
+            top: 0;
+            bottom: 0;
+        }
+
+        .citydb_short_container {
+            /*display: inline-block;*/
+            position: relative;
+            /*width: 48.5%;*/
+        }
+
+        .citydb_long_container {
+            margin-left: 0px;
+            margin-right: 2%;
+        }
+
+        .citydb_dynamic_box {
+            display: none;
+            margin: 3px;
+            padding: 2px 3px;
+            position: relative;
+            border: 2px #505050 solid;
+            background: rgba(42, 42, 42, 0.6);
+            border-radius: 4px;
+            color: #fff;
+            font-family: sans-serif;
+            font-size: 9pt;
+        }
+
+        .citydb_dynamic_box input {
+            vertical-align: middle;
+            padding-top: 1px;
+            padding-bottom: 1px;
+        }
+
+        .citydb_inputtable {
+            width: 100%;
+            color: white;
+        }
+
+        .citydb_inputtable th,
+        td {
+            padding: 5px;
+        }
+
+        .citydb_inputtable select {
+            width: 100%;
+            padding: 3px;
+            margin: 1px;
+        }
+
+        .citydb_inputtable input {
+            width: 100%;
+            padding: 0px;
+            margin: 0px;
+        }
+
+        #citydb_layerlistpanel {
+            width: 97.5%;
+            background: rgba(42, 42, 42, 0.8);
+            text-align: left;
+        }
+
+        #citydb_layerlistpanel label:hover {
+            background-color: #1e90ff;
+        }
+
+        #citydb_toolbox {
+            width: 400px;
+            display: none;
+            background: rgba(42, 42, 42, 0.5);
+            border: 3px #505050 solid;
+        }
+
+        .button {
+            cursor: pointer;
+        }
+
+        .customTButton {
+            color: white;
+            position: absolute;
+            background: #222;
+            border-radius: 4px;
+            border: 1px solid lightgray;
+        }
+
+        .bottomToolbar {
+            z-index: 2000;
+            position: absolute;
+            display: block;
+            bottom: 0px;
+            font-family: sans-serif;
+            font-size: smaller;
+            width: 97%;
+        }
+
+        .bottomToolbar>.leftpan {
+            color: #aaa;
+            background: #22222257;
+            padding: 5px;
+            border-radius: 5px;
+            border: 2px solid #ffffff2b;
+            float: left;
+        }
+
+        .bottomToolbar>.rightpan {
+            background: #22222257;
+            padding: 5px;
+            border: 1px solid #ffffff2b;
+            float: right;
+        }
+
+        #topToolbar {
+            z-index: 2000;
+            position: absolute;
+            display: inline-flex;
+            right: 82px;
+            top: 7px;
+        }
+
+        #topToolbar>div {
+            background: #303336 !important;
+            min-width: 30px;
+            height: 30px;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            border: 1px solid #444444;
+            border-radius: 4px;
+        }
+
+        #topToolbar>div>img {
+            width: 24px;
+            height: 24px;
+            margin: auto;
+        }
+
+        /* Checkbox Style Main Classes */
+        .myinput[type="checkbox"]:before {
+            position: relative;
+            display: block;
+            width: 11px;
+            height: 11px;
+            border: 1px solid #808080;
+            content: "";
+            background: #FFF;
+        }
+
+        .myinput[type="checkbox"]:after {
+            position: relative;
+            display: block;
+            left: 2px;
+            top: -11px;
+            width: 7px;
+            height: 7px;
+            border-width: 1px;
+            border-style: solid;
+            border-color: #B3B3B3 #dcddde #dcddde #B3B3B3;
+            content: "";
+            background-image: linear-gradient(135deg, #B1B6BE 0%, #FFF 100%);
+            background-repeat: no-repeat;
+            background-position: center;
+        }
+
+        .myinput[type="checkbox"]:checked:after {
+            background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAcAAAAHCAQAAABuW59YAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAIGNIUk0AAHolAACAgwAA+f8AAIDpAAB1MAAA6mAAADqYAAAXb5JfxUYAAAB2SURBVHjaAGkAlv8A3QDyAP0A/QD+Dam3W+kCAAD8APYAAgTVZaZCGwwA5wr0AvcA+Dh+7UX/x24AqK3Wg/8nt6w4/5q71wAAVP9g/7rTXf9n/+9N+AAAtpJa/zf/S//DhP8H/wAA4gzWj2P4lsf0JP0A/wADAHB0Ngka6UmKAAAAAElFTkSuQmCC'), linear-gradient(135deg, #B1B6BE 0%, #FFF 100%);
+        }
+
+        .myinput[type="checkbox"]:disabled:after {
+            -webkit-filter: opacity(0.4);
+        }
+
+        .myinput[type="checkbox"]:not(:disabled):checked:hover:after {
+            background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAcAAAAHCAQAAABuW59YAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAIGNIUk0AAHolAACAgwAA+f8AAIDpAAB1MAAA6mAAADqYAAAXb5JfxUYAAAB2SURBVHjaAGkAlv8A3QDyAP0A/QD+Dam3W+kCAAD8APYAAgTVZaZCGwwA5wr0AvcA+Dh+7UX/x24AqK3Wg/8nt6w4/5q71wAAVP9g/7rTXf9n/+9N+AAAtpJa/zf/S//DhP8H/wAA4gzWj2P4lsf0JP0A/wADAHB0Ngka6UmKAAAAAElFTkSuQmCC'), linear-gradient(135deg, #8BB0C2 0%, #FFF 100%);
+        }
+
+        .myinput[type="checkbox"]:not(:disabled):hover:after {
+            background-image: linear-gradient(135deg, #8BB0C2 0%, #FFF 100%);
+            border-color: #85A9BB #92C2DA #92C2DA #85A9BB;
+        }
+
+        .myinput[type="checkbox"]:not(:disabled):hover:before {
+            border-color: #3D7591;
+        }
+
+        /* Large checkboxes */
+        .myinput.large {
+            height: 22px;
+            width: 22px;
+        }
+
+        .myinput.large[type="checkbox"]:before {
+            width: 20px;
+            height: 20px;
+        }
+
+        .myinput.large[type="checkbox"]:after {
+            top: -20px;
+            width: 16px;
+            height: 16px;
+        }
+
+        /* Custom checkbox */
+        .myinput.large.custom[type="checkbox"]:checked:after {
+            background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAGHRFWHRBdXRob3IAbWluZWNyYWZ0aW5mby5jb23fZidLAAAAk0lEQVQ4y2P4//8/AyUYwcAD+OzN/oMwshjRBoA0Gr8+DcbIhhBlAEyz+qZZ/7WPryHNAGTNMOxpJvo/w0/uP0kGgGwGaZbrKgfTGnLc/0nyAgiDbEY2BCRGdCDCnA2yGeYVog0Aae5MV4c7Gzk6CRqAbDM2w/EaQEgzXgPQnU2SAcTYjNMAYm3GaQCxNuM0gFwMAPUKd8XyBVDcAAAAAElFTkSuQmCC'), linear-gradient(135deg, #B1B6BE 0%, #FFF 100%);
+        }
+
+        .myinput.large.custom[type="checkbox"]:not(:disabled):checked:hover:after {
+            background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAGHRFWHRBdXRob3IAbWluZWNyYWZ0aW5mby5jb23fZidLAAAAk0lEQVQ4y2P4//8/AyUYwcAD+OzN/oMwshjRBoA0Gr8+DcbIhhBlAEyz+qZZ/7WPryHNAGTNMOxpJvo/w0/uP0kGgGwGaZbrKgfTGnLc/0nyAgiDbEY2BCRGdCDCnA2yGeYVog0Aae5MV4c7Gzk6CRqAbDM2w/EaQEgzXgPQnU2SAcTYjNMAYm3GaQCxNuM0gFwMAPUKd8XyBVDcAAAAAElFTkSuQmCC'), linear-gradient(135deg, #8BB0C2 0%, #FFF 100%);
+        }
+
+        .cesium-viewer-cesiumInspectorContainer {
+            display: none;
+        }
+
+        #measuretoolbar {
+            position: absolute;
+            top: 700px;
+            right: 30px;
+            display: inline;
+            margin: 10px;
+            padding: 0px;
+            background: #394148;
+        }
+
+        .toolbaritem label {
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            -khtml-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+
+        .collapsible {
+            /* background-color: #777;
+            color: white;
+            cursor: pointer;
+            padding: 18px;
+            width: 100%;
+            border: none;
+            text-align: left;
+            outline: none;
+            font-size: 15px; */
+        }
+
+        .active,
+        .collapsible:hover {
+            background-color: #555;
+        }
+
+        .collapsible:after {
+            content: '\002B';
+            color: white;
+            font-weight: bold;
+            float: right;
+            margin-left: 5px;
+        }
+
+        .active:after {
+            content: "\2212";
+        }
+
+        .content {
+            padding: 0 5px;
+            display: none;
+            overflow: hidden;
+            transition: max-height 0.2s ease-out;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="topToolbar">
+        <div id="markerProperty_toolbar" class="toolbaritem"
+            style="display:none;color: white;font-family: monospace;margin-right: 2px;">
+            <table style="border: 1px solid #f5f5f580;border-radius: 4px;background: #595d62; color:white;">
+                <tbody>
+                    <tr>
+                        <td>Vertical Origin:
+                            <label><input type="radio" name="shadingMaterials" value="top"
+                                    data-bind="checked: verticalOrigin">
+                                Top</label>
+                            <label><input type="radio" name="shadingMaterials" value="center"
+                                    data-bind="checked: verticalOrigin">
+                                Center</label>
+                            <label><input type="radio" name="shadingMaterials" value="bottom"
+                                    data-bind="checked: verticalOrigin">
+                                Bottom</label>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Horizontal Origin:
+                            <label><input type="radio" name="shadingMaterials" value="left"
+                                    data-bind="checked: horizontalOrigin">
+                                Left</label>
+                            <label><input type="radio" name="shadingMaterials" value="center"
+                                    data-bind="checked: horizontalOrigin">
+                                Center</label>
+                            <label><input type="radio" name="shadingMaterials" value="right"
+                                    data-bind="checked: horizontalOrigin">
+                                Right</label>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <label>Head: <input type="range" min="1" max="360" step="1.0"
+                                    data-bind="value: heading, valueUpdate: 'input'">
+                                <input type="number" style="width:60px;" step="1" size="5"
+                                    data-bind="value: heading"></label>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <label>Pitch: <input type="range" min="0" max="10" step="1.0"
+                                    data-bind="value: pitch, valueUpdate: 'input'">
+                                <input type="number" style="width:60px;" step="1" size="5"
+                                    data-bind="value: pitch"></label>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <label>Roll: <input type="range" min="0" max="10" step="1.0"
+                                    data-bind="value: roll, valueUpdate: 'input'">
+                                <input type="number" style="width:60px;" step="1" size="5"
+                                    data-bind="value: roll"></label>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <label>Scale: <input type="range" min="0" max="10" step="1.0"
+                                    data-bind="value: scale, valueUpdate: 'input'">
+                                <input type="text" size="5" data-bind="value: scale"></label>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <label>Width: <input type="number" style="width:60px;" step="1" size="1"
+                                    data-bind="value: width"></label>
+                            <label>Height: <input type="number" style="width:60px;" step="1" size="1"
+                                    data-bind="value: height"></label>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <label>Lat: <input type="number" style="width:100px;" size="1"
+                                    data-bind="value: lat"></label>
+                            <label>Lon: <input type="number" style="width:100px;" size="1"
+                                    data-bind="value: lon"></label>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><label><input type="checkbox" data-bind="checked: clampToGround">Clamp To Ground</label>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Description</td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <textarea rows="3" cols="50" data-bind="value: description"></textarea>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="button" title="Download Snapshot" style="width: 30px;" onclick="downloadSnapshot();">
+            <img src="./img/snapshot.png">
+        </div>
+
+    </div>
+    <div id="config_toolbar" class="toolbaritem"
+        style="display:block;color: white;font-family: monospace;margin-right: 2px;bottom: 30px;position: absolute;right: 0px;">
+        <table style="border: 1px solid #f5f5f580;border-radius: 4px;background: #595d62; color:white;">
+            <tbody>
+                <tr>
+                    <td>
+                        <label><input type="checkbox" data-bind="checked: globelightening_enabled">
+                            Globe Lightening</label>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <p class="collapsible">Fog Settings</p>
+                        <div class="content">
+                            <label><input type="checkbox" data-bind="checked: fog_enabled">
+                                Enable</label><br>
+                            <label>Density: <input type="range" min="0" max="0.002" step="0.0001"
+                                    data-bind="value: fog_density, valueUpdate: 'input'">
+                                <input type="number" style="width:80px;" min="0" max="0.002" step="0.0001"
+                                    data-bind="value: fog_density"></label><br>
+                            <label>Brightness: <input type="range" min="0" max="1" step="0.1"
+                                    data-bind="value: fog_minimumBrightness, valueUpdate: 'input'">
+                                <input type="number" style="width:80px;" min="0" max="1" step="0.1"
+                                    data-bind="value: fog_minimumBrightness"></label>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <p class="collapsible">Snow Settings</p>
+                        <div class="content">
+                            <label><input type="checkbox" data-bind="checked: snow_enabled">
+                                Enable</label><br>
+                            <!-- <label>Density: <input type="range" min="0" max="0.002" step="0.0001"
+                                    data-bind="value: fog_density, valueUpdate: 'input'">
+                                <input type="number" style="width:80px;" min="0" max="0.002" step="0.0001"
+                                    data-bind="value: fog_density"></label><br>
+                            <label>Brightness: <input type="range" min="0" max="1" step="0.1"
+                                    data-bind="value: fog_minimumBrightness, valueUpdate: 'input'">
+                                <input type="number" style="width:80px;" min="0" max="1" step="0.1"
+                                    data-bind="value: fog_minimumBrightness"></label> -->
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="bottomToolbar">
+        <div class="leftpan">
+
+        </div>
+        <div class="rightpan">
+            <div class="button bottombutton" title="Configurations" style="width:16px;height:16px"
+                onclick="toggleConfigurations();">
+                <img src="./img/global.png">
+            </div>
+        </div>
+    </div>
+    <div id="cesiumContainer"></div>
+    <div id="measuretoolbar"></div>
+    <div id="uiMenu">
+        <div onclick="showToolbox()">
+            <select class="cesium-button">
+                <option>Show / Hide Toolbox</option>
+            </select>
+            <div class="citydb_overSelect"></div>
+        </div>
+        <div id="uiMenu-content">
+            <div id="citydb_toolbox">
+                <div class="citydb_long_container">
+                    <div id="citydb_layerlistpanel" class="citydb_dynamic_box" style="display: block; "></div>
+                </div>
+                <div style="width: 100%;">
+                    <!-- add layer panel -->
+                    <div class="citydb_short_container" onclick="showAddLayerPanel()">
+                        <select style="width: 100%;" class="cesium-button">
+                            <option>Change Weapon</option>
+                        </select>
+                        <div class="citydb_overSelect"></div>
+                    </div>
+
+                    <div id="citydb_addlayerpanel" class="citydb_dynamic_box">
+                        <table class="citydb_inputtable">
+                            <tbody>
+                                <tr>
+                                    <td>Choose Weapon For Depolyment</td>
+                                    <td>
+                                        <select id="weaponDataDropdown" data-bind="value: layerDataType"
+                                            onchange="weaponDataDropdownOnchange()">
+                                            <option value="" disabled selected hidden>--select a weapon--</option>
+                                            <option value="a" data-velocity="827">A</option>
+                                            <option value="b" data-velocity="475">B</option>
+                                            <option value="r" data-velocity="820">R</option>
+                                            <!-- <option value="155mm-bofors" data-velocity="827">155mm BoFoRs</option>
+                                            <option value="sample-weapon" data-velocity="200">Sample Weapon</option> -->
+                                        </select>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Angle</td>
+                                    <td>
+                                        <input type="range" min="1" max="90" value="50" class="slider" id="angle">
+                                    <th style="width: 10%; padding-right: 13px;">
+                                        <input id="input-angle" name="price" value="50" readonly>
+                                    </th>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Direction</td>
+                                    <td>
+                                        <input type="range" min="1" max="360" value="60" class="slider" id="direction">
+                                    <th style="width: 10%; padding-right: 9px;">
+                                        <input id="input-direction" name="price" value="60" readonly>
+                                    </th>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="toolbar" class="toolbar">
+        <div class="button" data-type="marker" title="Click to start drawing a 2D marker"><span><img
+                    src="./img/glyphicons_242_google_maps.png"></span></div>
+        <div class="button" data-type="line" title="Click to start drawing a 2D polyline"><span><img
+                    src="./img/glyphicons_097_vector_path_line.png"></span></div>
+        <div class="button" data-type="polygon" title="Click to start drawing a 2D polygon"><span><img
+                    src="./img/glyphicons_096_vector_path_polygon.png"></span></div>
+        <div class="button" data-type="circle" title="Click to start drawing a Circle"><span><img
+                    src="./img/glyphicons_095_vector_path_circle.png"></span></div>
+        <div class="divider"></div>
+        <div class="button deleter" data-type="deleteall" title="Remove all primitives"><span><img
+                    src="./img/glyphicons_067_cleaning.png"></span>
+        </div>
+        <div class="divider"></div>
+        <div class="colorpicker button deleter" data-type="colorSelector" title="Select Color">
+            <!-- <div class="colorpicker"></div> -->
+        </div>
+    </div>
+    <div id="toolbar2" style="position:absolute; margin-top:2px; margin-left: -2px;">
+        <div style="width: fit-content;">
+            <table>
+                <tbody>
+                    <tr>
+                        <td style="padding:0px;">
+                            <div class="toolbar">
+                                <div class="button" title="Imagery Adjustment" onclick="toggleImageryAdjustment(this);">
+                                    <span><img src="./img/sun.png" style="width: 24px;height: 24px;"></span>
+                                </div>
+                                <div class="button" title="Visibility Analysis"
+                                    onclick="toggleVisibilityAnalysis(this);">
+                                    <span><img src="./img/cone1.png" style="width: 24px;height: 24px;"></span>
+                                </div>
+                                <div class="button" title="Contour Analysis" onclick="toggleCounterAnalysis1(this);">
+                                    <span><img src="./img/contour-step-barrel.png"
+                                            style="width: 24px;height: 24px;"></span>
+                                </div>
+                                <div class="button" title="Elevation/Slope Analysis"
+                                    onclick="toggleCounterAnalysis2(this);">
+                                    <span><img src="./img/contour-step-barrel2.png"
+                                            style="width: 24px;height: 24px;"></span>
+                                </div>
+                                <div class="button" title="Cesium Inspector" onclick="toggleInspector();"><span><img
+                                            src="./img/coding.png" style="width: 24px;height: 24px;"></span></div>
+                                <div class="button" title="Line Of Sight" onclick="meassureThings('lineSight');">
+                                    <span><img src="./img/view.png" style="width: 24px;height: 24px;"></span>
+                                </div>
+                                <div class="button" title="Stick To Ground"><span><input type="checkbox" checked
+                                            class="myinput large" onchange="clampToGround=this.checked;" /></span></div>
+                                <div class="button" style="display: none;" title="Measure Height"><span><img
+                                            src="./img/vertical-lines.png" style="width: 24px;height: 24px;"></span>
+                                </div>
+                                <div class="button" title="Meassure Distance"
+                                    onclick="meassureThings('Space distance');">
+                                    <span><img src="./img/hexagon.png"></span>
+                                </div>
+                                <div class="button" title="Meassure Area" onclick="meassureThings('Space area');">
+                                    <span><img src="./img/area.png"></span>
+                                </div>
+                                <div class="button" title="Triangulation Measurement"
+                                    onclick="meassureThings('Triangulation');"><span><img
+                                            src="./img/triangle.png"></span>
+                                </div>
+                                <div class="button" title="Volume Measurement" onclick="toggleVolumeMeasurement(this);">
+                                    <span><img src="./img/cylinder.png"></span>
+                                </div>
+                                <div class="divider"></div>
+                                <div class="button deleter" data-type="deleteall" title="Remove all"
+                                    onclick="meassureThings('Clear');">
+                                    <span><img src="./img/delete.png"></span>
+                                </div>
+                                <div class="divider"></div>
+                                <div class="button" title="First Person View (use 'W/A/S/D' keys for movement)"
+                                    onclick="toggleFPP(this);"><span><img src="./img/vr-glasses.png"></span>
+                                </div>
+                            </div>
+                        </td>
+                        <td style="padding:0px;">
+                            <div id="contour1_toolbar" class="toolbaritem"
+                                style="display:none;color: white;font-family: monospace;position:relative;top:-32px;">
+                                <table style="border: 1px solid #f5f5f580;border-radius: 4px;background: #595d62;">
+                                    <tbody>
+                                        <tr>
+                                            <td>Background Transparency</td>
+                                            <td>
+                                                <input type="range" min="0.0" max="1.0" step="0.01"
+                                                    data-bind="value: backgroundTransparency, valueUpdate: 'input'">
+                                                <input type="text" size="4" data-bind="value: backgroundTransparency">
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>Band Transparency</td>
+                                            <td>
+                                                <input type="range" min="0.0" max="1.0" step="0.01"
+                                                    data-bind="value: bandTransparency, valueUpdate: 'input'">
+                                                <input type="text" size="4" data-bind="value: bandTransparency">
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>Band Thickness</td>
+                                            <td>
+                                                <input type="range" min="10" max="1000" step="1"
+                                                    data-bind="value: bandThickness, valueUpdate: 'input'">
+                                                <input type="text" size="4" data-bind="value: bandThickness">
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>Band 1 Position</td>
+                                            <td>
+                                                <input type="range" min="4000" max="8848" step="1"
+                                                    data-bind="value: band1Position, valueUpdate: 'input'">
+                                                <input type="text" size="4" data-bind="value: band1Position">m
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>Band 2 Position</td>
+                                            <td>
+                                                <input type="range" min="4000" max="8848" step="1"
+                                                    data-bind="value: band2Position, valueUpdate: 'input'">
+                                                <input type="text" size="4" data-bind="value: band2Position">m
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>Band 3 Position</td>
+                                            <td>
+                                                <input type="range" min="4000" max="8848" step="1"
+                                                    data-bind="value: band3Position, valueUpdate: 'input'">
+                                                <input type="text" size="4" data-bind="value: band3Position">m
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>Gradient</td>
+                                            <td>
+                                                <input type="checkbox" data-bind="checked: gradient">
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <button type="button"
+                                                    onclick="elevationAnalysis.updateMaterial({ enabled: false });"
+                                                    style="cursor: pointer;">Clear</button>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div id="contour2_toolbar" class="toolbaritem"
+                                style="display:none;color: white;font-family: monospace;position:relative;top:-107px;">
+                                <table style="border: 1px solid #f5f5f580;border-radius: 4px;background: #595d62;">
+                                    <tbody>
+                                        <tr>
+                                            <td>
+                                                <div class="demo-container">
+                                                    <label><input type="radio" name="shadingMaterials" value="none"
+                                                            data-bind="checked: selectedShading">
+                                                        No shading</label>
+                                                    <label><input type="radio" name="shadingMaterials" value="elevation"
+                                                            data-bind="checked: selectedShading">
+                                                        Elevation</label>
+                                                    <label><input type="radio" name="shadingMaterials" value="slope"
+                                                            data-bind="checked: selectedShading">
+                                                        Slope</label>
+                                                    <label><input type="radio" name="shadingMaterials" value="aspect"
+                                                            data-bind="checked: selectedShading">
+                                                        Aspect</label>
+                                                </div>
+                                                <div class="demo-container">
+                                                    <div>
+                                                        <label><input type="checkbox"
+                                                                data-bind="checked: enableContour">Enable
+                                                            Contour Lines</label>
+                                                    </div>
+                                                    <div>
+                                                        Spacing
+                                                        <input style="width: 136px" type="range" min="1.0" max="500.0"
+                                                            step="1.0"
+                                                            data-bind="value: contourSpacing, valueUpdate: 'input', enable: enableContour">
+                                                        <input type="text" size="4" data-bind="value: contourSpacing">m
+                                                    </div>
+                                                    <div>
+                                                        Line Width
+                                                        <input style="width: 125px" type="range" min="1.0" max="10.0"
+                                                            step="1.0"
+                                                            data-bind="value: contourWidth, valueUpdate: 'input', enable: enableContour">
+                                                        <span data-bind="text: contourWidth"></span>px
+                                                    </div>
+                                                    <div>
+                                                        <button type="button"
+                                                            data-bind="click: changeColor, enable: enableContour">
+                                                            Change contour color
+                                                        </button>
+
+                                                        <button type="button"
+                                                            onclick="elevationAnalysis2.updateMaterial({ enabled: false });"
+                                                            style="cursor: pointer;">Clear</button>
+
+                                                    </div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div id="imageryAdjustment_toolbar" class="toolbaritem"
+                                style="display:none;color: white;font-family: monospace;position:relative;top:-107px;">
+                                <table style="border: 1px solid #f5f5f580;border-radius: 4px;background: #595d62;">
+                                    <tbody>
+                                        <tr>
+                                            <td>Brightness</td>
+                                            <td>
+                                                <input type="range" min="0" max="3" step="0.02"
+                                                    data-bind="value: brightness, valueUpdate: 'input'">
+                                                <input type="text" size="5" data-bind="value: brightness">
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>Contrast</td>
+                                            <td>
+                                                <input type="range" min="0" max="3" step="0.02"
+                                                    data-bind="value: contrast, valueUpdate: 'input'">
+                                                <input type="text" size="5" data-bind="value: contrast">
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>Hue</td>
+                                            <td>
+                                                <input type="range" min="0" max="3" step="0.02"
+                                                    data-bind="value: hue, valueUpdate: 'input'">
+                                                <input type="text" size="5" data-bind="value: hue">
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>Saturation</td>
+                                            <td>
+                                                <input type="range" min="0" max="3" step="0.02"
+                                                    data-bind="value: saturation, valueUpdate: 'input'">
+                                                <input type="text" size="5" data-bind="value: saturation">
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>Gamma</td>
+                                            <td>
+                                                <input type="range" min="0" max="3" step="0.02"
+                                                    data-bind="value: gamma, valueUpdate: 'input'">
+                                                <input type="text" size="5" data-bind="value: gamma">
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <button type="button"
+                                                    onclick="imageryAdjustment.updateMaterial({ enabled: false });">Reset</button>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div id="viewshad3d_toolbar" class="toolbaritem"
+                                style="display:none;color: white;font-family: monospace;position:relative;top:-107px;">
+                                <table style="border: 1px solid #f5f5f580;border-radius: 4px;background: #595d62;">
+                                    <tbody>
+                                        <tr>
+                                            <td>Horizontal Angle</td>
+                                            <td>
+                                                <input type="range" min="1" max="360" step="1"
+                                                    data-bind="value: horizontalViewAngle, valueUpdate: 'input'">
+                                                <input type="text" size="5" data-bind="value: horizontalViewAngle">
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>Vertical Angle</td>
+                                            <td>
+                                                <input type="range" min="1" max="360" step="1"
+                                                    data-bind="value: verticalViewAngle, valueUpdate: 'input'">
+                                                <input type="text" size="5" data-bind="value: verticalViewAngle">
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>View Distance</td>
+                                            <td>
+                                                <input type="range" min="1" max="360" step="1"
+                                                    data-bind="value: viewDistance, valueUpdate: 'input'">
+                                                <input type="text" size="5" data-bind="value: viewDistance">
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <button type="button" onclick="viewshed3d.clearAll();">Clear
+                                                    All</button>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div id="volumemeasurement_toolbar" class="toolbaritem"
+                                style="display:none;color: white;font-family: monospace;position:relative;top:142px;">
+                                <table style="border: 1px solid #f5f5f580;border-radius: 4px;background: #595d62;">
+                                    <tbody>
+                                        <tr>
+                                            <td>
+                                                <button type="button" onclick="cesiumMeasurer.cleanUp();">Clear</button>
+                                            </td>
+                                        </tr>
+
+                                    </tbody>
+                                </table>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div id="logging"></div>
+    <script>
+        var coll = document.getElementsByClassName("collapsible");
+        var i;
+
+        for (i = 0; i < coll.length; i++) {
+            coll[i].addEventListener("click", function () {
+                this.classList.toggle("active");
+                var content = this.nextElementSibling;
+                if (content.style.display === "block") {
+                    content.style.display = "none";
+                } else {
+                    content.style.display = "block";
+                }
+            });
+        }
+    </script>
+    <script>
+        /* terrain provider */
+        var selected_color = {
+            r: 208,
+            g: 155,
+            b: 48,
+            a: 0.6
+        };
+        var colorpickerOptions = {
+            parts: ['map', 'bar', 'alpha', 'swatches', 'footer'],
+            alpha: true,
+            altProperties: 'background-color',
+            altField: '.colorpicker',
+            color: 'fe9810',
+            select: function (event, color) {
+                selected_color = color.rgb;
+                selected_color.a = color.a;
+                //console.log(color_in_rgb_format);
+            },
+            inline: false
+        };
+
+        // $('.colorpicker').colorpicker(colorpickerOptions);
+
+        let pickedEntity;
+        /* ONLINE STARTED HERE*/
+
+        let worldTerrain = Cesium.createWorldTerrain({
+            requestWaterMask: true,
+            requestVertexNormals: true
+        });
+
+        let viewer = new Cesium.Viewer('cesiumContainer', {
+            imageryProvider: Cesium.createWorldImagery({
+                style: Cesium.IonWorldImageryStyle.AERIAL_WITH_LABELS
+            }),
+            //terrainProvider: worldTerrain,
+            navigationHelpButton: false,
+            baseLayerPicker: false,
+            geocoder: false,
+            timeline: false,
+            //shadows: true,
+            shouldAnimate: true,
+            terrainShadows: Cesium.ShadowMode.ENABLED,
+        });
+        viewer.scene.terrainProvider = worldTerrain;
+
+        //viewer.scene.globe.showGroundAtmosphere = false;
+        //cesiumMeasurer.addToolbar(document.getElementById("measuretoolbar"), {});
+
+        /* ONLINE ENDED HERE*/
+
+        //CesiumMiniMap(viewer); //Mini map implementation
+
+
+        /* OFFLINE STARTED HERE*/
+        /*
+                Cesium.Ion.defaultAccesToken = null
+                var viewer = new Cesium.Viewer('cesiumContainer', {
+                    imageryProvider: new Cesium.OpenStreetMapImageryProvider({
+                        url: Cesium.buildModuleUrl('Assets/Textures/NaturalEarthII'),// + '/{z}/{x}/{reverseY}.jpg',
+                        fileExtension: 'png',
+                        //tilingScheme : new Cesium.GeographicTilingScheme(),
+                    }),
+                    // sceneMode: 3,
+                    baseLayerPicker: false,
+                    geocoder: false
+                });
+
+                var terrainProvider = new Cesium.CesiumTerrainProvider({
+                    url: 'http://localhost:9090/tilesets/tiles/'
+                });
+                viewer.scene.terrainProvider = terrainProvider;
+                /* OFFLINE ENDED HERE*/
+
+
+        var firstPersonCameraController = new Cesium.FirstPersonCameraController({
+            cesiumViewer: viewer
+        });
+
+        var cesiumMeasurer = new CesiumMeasurer(viewer);
+
+        var scene = viewer.scene;
+        scene.globe.depthTestAgainstTerrain = true;
+        viewer.extend(Cesium.viewerCesiumInspectorMixin);
+
+        // Compass calling on map with params
+        var options = {};
+
+        options.enableCompass = true;
+        options.enableZoomControls = true;
+        options.enableDistanceLegend = true;
+
+
+        viewer.extend(Cesium.viewerCesiumNavigationMixin, options);
+
+        /*DRAWING TOOLBAR HERE*/
+        /*
+                var drawHelper = new DrawHelper(viewer);
+                var toolbar = drawHelper.addToolbar(document.getElementById("toolbar"), {
+                    buttons: ['marker', 'polyline', 'polygon', 'circle', 'extent']
+                });
+                toolbar.addListener('markerCreated', function (event) {
+                    loggingMessage('Marker created at ' + event.position.toString());
+                    // create one common billboard collection for all billboards
+                    var b = new Cesium.BillboardCollection();
+                    scene.primitives.add(b);
+                    var billboard = b.add({
+                        show: true,
+                        position: event.position,
+                        pixelOffset: new Cesium.Cartesian2(0, 0),
+                        eyeOffset: new Cesium.Cartesian3(0.0, 0.0, 0.0),
+                        horizontalOrigin: Cesium.HorizontalOrigin.CENTER,
+                        verticalOrigin: Cesium.VerticalOrigin.CENTER,
+                        scale: 1.0,
+                        image: 'http://pad.geocento.com/DrawHelper/img/glyphicons_242_google_maps.png',
+                        color: new Cesium.Color(1.0, 1.0, 1.0, 1.0)
+                    });
+                    billboard.setEditable();
+                });
+                toolbar.addListener('polylineCreated', function (event) {
+                    loggingMessage('Polyline created with ' + event.positions.length + ' points');
+                    var polyline = new DrawHelper.PolylinePrimitive({
+                        positions: event.positions,
+                        width: 5,
+                        geodesic: true
+                    });
+                    scene.primitives.add(polyline);
+                    polyline.setEditable();
+                    polyline.addListener('onEdited', function (event) {
+                        loggingMessage('Polyline edited, ' + event.positions.length + ' points');
+                    });
+
+                });
+                toolbar.addListener('polygonCreated', function (event) {
+                    loggingMessage('Polygon created with ' + event.positions.length + ' points');
+                    var polygon = new DrawHelper.PolygonPrimitive({
+                        positions: event.positions,
+                        material: Cesium.Material.fromType('Checkerboard')
+                    });
+                    scene.primitives.add(polygon);
+                    polygon.setEditable();
+                    polygon.addListener('onEdited', function (event) {
+                        loggingMessage('Polygon edited, ' + event.positions.length + ' points');
+                    });
+
+                });
+                toolbar.addListener('circleCreated', function (event) {
+                    loggingMessage('Circle created: center is ' + event.center.toString() + ' and radius is ' + event.radius.toFixed(1) + ' meters');
+                    var circle = new DrawHelper.CirclePrimitive({
+                        center: event.center,
+                        radius: event.radius,
+                        material: Cesium.Material.fromType(Cesium.Material.RimLightingType)
+                    });
+                    scene.primitives.add(circle);
+                    circle.setEditable();
+                    circle.addListener('onEdited', function (event) {
+                        loggingMessage('Circle edited: radius is ' + event.radius.toFixed(1) + ' meters');
+                    });
+                });
+                toolbar.addListener('extentCreated', function (event) {
+                    var extent = event.extent;
+                    loggingMessage('Extent created (N: ' + extent.north.toFixed(3) + ', E: ' + extent.east.toFixed(3) + ', S: ' + extent.south.toFixed(3) + ', W: ' + extent.west.toFixed(3) + ')');
+                    var extentPrimitive = new DrawHelper.ExtentPrimitive({
+                        extent: extent,
+                        material: Cesium.Material.fromType(Cesium.Material.StripeType)
+                    });
+                    scene.primitives.add(extentPrimitive);
+                    extentPrimitive.setEditable();
+                    extentPrimitive.addListener('onEdited', function (event) {
+                        loggingMessage('Extent edited: extent is (N: ' + event.extent.north.toFixed(3) + ', E: ' + event.extent.east.toFixed(3) + ', S: ' + event.extent.south.toFixed(3) + ', W: ' + event.extent.west.toFixed(3) + ')');
+                    });
+                });
+                function loggingMessage(message) {
+                    console.log(message);
+                }
+                /*DRAWING TOOLBAR ENDED HERE*/
+
+        var handler = new Cesium.ScreenSpaceEventHandler(viewer.canvas);
+        viewer.scene.globe.depthTestAgainstTerrain = true;
+        viewer.cesiumWidget.screenSpaceEventHandler.removeInputAction(Cesium.ScreenSpaceEventType.LEFT_DOUBLE_CLICK);
+        viewer.cesiumWidget.screenSpaceEventHandler.removeInputAction(Cesium.ScreenSpaceEventType.LEFT_CLICK);
+
+        viewer.camera.setView({
+            destination: Cesium.Cartesian3.fromDegrees(83.552, 30.328, 6412134)
+        });
+
+        // viewer.entities.add({
+        //     id: 'mou',
+        //     label: {
+        //         // position : Cesium.Cartesian2.ZERO, 
+        //         show: true,
+        //     }
+        // });
+        // var labelEntity = viewer.entities.add({
+        //     label: {
+        //         show: false,
+        //         showBackground: true,
+        //         font: '14px monospace',
+        //         horizontalOrigin: Cesium.HorizontalOrigin.LEFT,
+        //         verticalOrigin: Cesium.VerticalOrigin.TOP,
+        //         //pixelOffset: new Cesium.Cartesian2(15, 0)
+        //         eyeOffset: new Cesium.Cartesian3(0, 0, -5),
+        //         heightReference: Cesium.HeightReference.CLAMP_TO_GROUND,
+        //         disableDepthTestDistance: 15000
+        //     }
+        // });
+        /*
+        function CustomLine() {
+            this.positions = [];
+            this.markers = [];
+
+            var that = this;
+
+            this.line = viewer.entities.add({
+                polyline: {
+                    // This callback updates positions each frame.
+                    positions: new Cesium.CallbackProperty(function (time, result) {
+                        return that.positions;
+                    }, false),
+                    width: 3,
+                    clampToGround: true,
+                    material: Cesium.Color.YELLOW
+                }
+            });
+        }
+
+        
+        CustomLine.prototype.addPoint = function (position) {
+            var that = this;
+            var n = this.positions.length;
+            this.positions[n] = position;
+            var pinBuilder = new Cesium.PinBuilder();
+
+            var marker = viewer.entities.add({
+                position: new Cesium.CallbackProperty(function (time, result) {
+                    return that.positions[n];
+                }, false),
+                billboard: {
+                    image: pinBuilder.fromText(n + 1, Cesium.Color.RED, 48).toDataURL(),
+                    heightReference: Cesium.HeightReference.CLAMP_TO_GROUND,
+                    verticalOrigin: Cesium.VerticalOrigin.BOTTOM
+                }
+            });
+
+            this.markers.push(marker);
+        };
+        */
+
+        handler.setInputAction(function (event) {
+            drawingToolLeft(event);
+        }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
+
+        function showLatLonMoving(event) {
+            var ray = viewer.camera.getPickRay(event.endPosition);
+            var mousePosition = viewer.scene.globe.pick(ray, viewer.scene);
+            if (Cesium.defined(mousePosition)) {
+                var cartographic = Cesium.Cartographic.fromCartesian(mousePosition);
+                var latitudeString = Cesium.Math.toDegrees(cartographic.latitude).toFixed(3);
+                var longitudeString = Cesium.Math.toDegrees(cartographic.longitude).toFixed(3);
+                var heightString = cartographic.height.toFixed(2);
+                var MGRSvalue = MGRSString(cartographic.latitude, cartographic.longitude);
+                var lhtext =
+                    `Lat: ${(latitudeString).slice(-8)}\u00B0
+                    Lon: ${(longitudeString).slice(-8)}\u00B0
+                    Alt: ${(heightString).slice(-7)}m\u00B0
+                    MGRS: ${MGRSvalue}`;
+
+                $(".bottomToolbar>.leftpan").html(lhtext);
+                // document.getElementById("bottomToolbar").innerHTML = lhtext;
+            }
+        }
+
+        handler.setInputAction(function (event) {
+            drawingToolMove(event);
+            showLatLonMoving(event);
+            var ellipsoid = viewer.scene.globe.ellipsoid;
+            // Mouse over the globe to see the cartographic position 
+            // var cartesian = viewer.camera.pickEllipsoid(new Cesium.Cartesian3(event.clientX, event.clientY), ellipsoid);
+            // console.log("cart3", cartesian);
+        }, Cesium.ScreenSpaceEventType.MOUSE_MOVE);
+
+
+
+        handler.setInputAction(function (event) {
+            terminateShape();
+            // if (!drawing) {
+            //     return;
+            // }
+            // drawing = false;
+        }, Cesium.ScreenSpaceEventType.RIGHT_CLICK);
+
+        // viewer.scene.canvas.addEventListener('mousemove', function (e) {
+        //     // var entity = viewer.entities.getById('mou');
+        //     // var ellipsoid = viewer.scene.globe.ellipsoid;
+        //     // // Mouse over the globe to see the cartographic position 
+        //     // var cartesian = viewer.camera.pickEllipsoid(new Cesium.Cartesian3(e.clientX, e.clientY), ellipsoid);
+        //     // if (cartesian) {
+        //     //     var cartographic = ellipsoid.cartesianToCartographic(cartesian);
+        //     //     var longitudeString = Cesium.Math.toDegrees(cartographic.longitude).toFixed(10);
+        //     //     var latitudeString = Cesium.Math.toDegrees(cartographic.latitude).toFixed(10);
+        //     //     entity.position = cartesian;
+        //     //     entity.label.show = true;
+        //     //     // entity.label.font_style = 84;
+        //     //     // //entity.position= Cesium.Cartesian2.ZERO; 
+        //     //     // entity.label.text = '(' + longitudeString + ', ' + latitudeString + ')';
+        //     //     var result = entity.label.text; // we can reuse this
+        //     //     document.getElementById("bottomToolbar").innerHTML = '(' + longitudeString + ', ' + latitudeString + ',' + cartographic.height + ')';
+        //     // } else {
+        //     //     entity.label.show = false;
+        //     // }
+        // });
+        // var viewer = new Cesium.Viewer('cesiumContainer');
+
+        function change_direction(positionCBP, radius, maxHeight, theta) {
+
+            let centerPoint = Cesium.Cartographic.fromCartesian(positionCBP);
+
+            let centerXYZ = Cesium.Cartographic.toCartesian(centerPoint);
+            var enuTransform = Cesium.Transforms.eastNorthUpToFixedFrame(centerXYZ);
+
+            let directionX = radius * Math.cos(Cesium.Math.toRadians(theta));
+            let directionY = radius * Math.sin(Cesium.Math.toRadians(theta));
+
+            let limitENU = new Cesium.Cartesian4(directionX, directionY, 0.0, 1.0);
+
+            var limitECF = new Cesium.Cartesian4();
+            limitECF = Cesium.Matrix4.multiplyByVector(enuTransform, limitENU, limitECF);
+
+
+            var startTime = viewer.clock.startTime;
+            var midTime = Cesium.JulianDate.addSeconds(startTime, 43200, new Cesium.JulianDate());
+            let stopTime = Cesium.JulianDate.addSeconds(startTime, 86400, new Cesium.JulianDate());
+
+            var property = new Cesium.SampledPositionProperty();
+            property.addSample(startTime, centerXYZ);
+            property.addSample(stopTime, limitECF);
+
+
+            var midPoint = Cesium.Cartographic.fromCartesian(property.getValue(midTime));
+            midPoint.height = maxHeight;
+
+
+            var midPosition = viewer.scene.globe.ellipsoid.cartographicToCartesian(midPoint, new Cesium.Cartesian4());
+            property.addSample(startTime, centerXYZ);
+            property.addSample(midTime, midPosition);
+            property.addSample(stopTime, limitECF);
+
+            var b = new Cesium.Cartesian3(midPosition.x, midPosition.y, midPosition.z);
+            var c = new Cesium.Cartesian3(limitECF.x, limitECF.y, limitECF.z);
+
+            return {
+                property,
+                radius,
+                maxHeight,
+                theta,
+                newPos: {
+                    "a": centerXYZ,
+                    "b": b,
+                    "c": c
+                }
+            };
+        }
+
+
+        function change_theta(positionCBP, theta, entity) {
+            let initialVelocity = entity.initialVelocity;
+
+            let centerPoint = Cesium.Cartographic.fromCartesian(positionCBP);
+
+            let centerXYZ = Cesium.Cartographic.toCartesian(centerPoint);
+            var enuTransform = Cesium.Transforms.eastNorthUpToFixedFrame(centerXYZ);
+
+            /* second phase */
+            let verticalVelocity = initialVelocity * Math.sin(Cesium.Math.toRadians(theta));
+            let maxHeight = (verticalVelocity * verticalVelocity) / (2 * 9.8);
+            let range = initialVelocity * initialVelocity * 2 * Math.sin(Cesium.Math.toRadians(theta)) * Math.cos(Cesium
+                .Math.toRadians(theta)) / 9.8;
+
+            let directionX = range * Math.cos(Cesium.Math.toRadians(entity.directionAngle));
+            let directionY = range * Math.sin(Cesium.Math.toRadians(entity.directionAngle));
+
+            let limitENU = new Cesium.Cartesian4(directionX, directionY, 0.0, 1.0);
+            let height = parseInt(centerPoint.height) + parseInt(maxHeight);
+
+
+            // Transform point in local coordinate system (East-North-Up) to ECEF
+            var limitECF = new Cesium.Cartesian4();
+            limitECF = Cesium.Matrix4.multiplyByVector(enuTransform, limitENU, limitECF);
+
+
+            var startTime = viewer.clock.startTime;
+            var midTime = Cesium.JulianDate.addSeconds(startTime, 43200, new Cesium.JulianDate());
+            let stopTime = Cesium.JulianDate.addSeconds(startTime, 86400, new Cesium.JulianDate());
+
+            var property = new Cesium.SampledPositionProperty();
+            property.addSample(startTime, centerXYZ);
+            property.addSample(stopTime, limitECF);
+
+
+            var midPoint = Cesium.Cartographic.fromCartesian(property.getValue(midTime));
+            midPoint.height = height;
+
+
+            var midPosition = viewer.scene.globe.ellipsoid.cartographicToCartesian(midPoint, new Cesium.Cartesian4());
+            property.addSample(startTime, centerXYZ);
+            property.addSample(midTime, midPosition);
+            property.addSample(stopTime, limitECF);
+
+            var b = new Cesium.Cartesian3(midPosition.x, midPosition.y, midPosition.z);
+            var c = new Cesium.Cartesian3(limitECF.x, limitECF.y, limitECF.z);
+
+            return {
+                property,
+                range,
+                height,
+                newPos: {
+                    "a": centerXYZ,
+                    "b": b,
+                    "c": c
+                }
+            };
+        }
+    </script>
+    <script>
+        let angle = document.getElementById('angle');
+        let direction = document.getElementById('direction');
+        let inputAngle = document.getElementById('input-angle');
+        let inputDirection = document.getElementById('input-direction');
+
+
+        function inputHandler(e, data) {
+            data.value = e.target.value;
+        }
+
+        angle.addEventListener('input', function (e) {
+            inputHandler(e, inputAngle)
+        });
+        direction.addEventListener('input', function (e) {
+            inputHandler(e, inputDirection)
+        });
+
+        let expanded = false;
+
+        function showToolbox() {
+            var citydb_toolbox = document.getElementById("citydb_toolbox");
+            if (!expanded) {
+                citydb_toolbox.style.display = "block";
+                expanded = true;
+                draggablesEnabled = false;
+            } else {
+                citydb_toolbox.style.display = "none";
+                expanded = false;
+                draggablesEnabled = true;
+            }
+        }
+
+        var expanded2 = false;
+
+        function showAddLayerPanel() {
+            var citydb_addlayerpanel = document.getElementById("citydb_addlayerpanel");
+            if (!expanded2) {
+                citydb_addlayerpanel.style.display = "block";
+                expanded2 = true;
+            } else {
+                citydb_addlayerpanel.style.display = "none";
+                expanded2 = false;
+            }
+        }
+
+
+        //let handler = new Cesium.ScreenSpaceEventHandler(viewer.canvas);
+
+        function weaponDataDropdownOnchange() {
+            var weaponDataDropdown = document.getElementById("weaponDataDropdown");
+
+            let waypointPosition = '';
+            let routeEntity = '';
+
+            var dataVelocity = weaponDataDropdown.options[weaponDataDropdown.selectedIndex].dataset.velocity;
+            var weaponName = weaponDataDropdown.options[weaponDataDropdown.selectedIndex].value;
+
+            handler.setInputAction((click) => {
+                angle.value = 50;
+                direction.value = 0;
+                inputAngle.value = 50;
+                inputDirection.value = 0;
+                waypointPosition = getPointCoordinates(click, viewer);
+                routeEntity = createWaypoint(waypointPosition, weaponName, dataVelocity, viewer);
+            }, Cesium.ScreenSpaceEventType.LEFT_DOUBLE_CLICK);
+
+        }
+
+        function createWaypoint(waypointPosition, weaponName, dataVelocity, viewer) {
+            let entity = createDraggableWaypoint(waypointPosition, weaponName, dataVelocity, viewer);
+            return entity;
+        }
+
+        function getPointCoordinates(event, viewer) {
+            var adaptivePosition = viewer.scene.pickPosition(event.position);
+
+            // ?let clickPosition = viewer.camera.getPickRay(event.position);
+            //        let clickPosition = viewer.camera.pickEllipsoid(event.position);
+            //        console.log(adaptivePosition);
+            return adaptivePosition;
+        }
+
+
+        function disableCameraMotion(state, viewer) {
+            viewer.scene.screenSpaceCameraController.enableRotate = state;
+            viewer.scene.screenSpaceCameraController.enableZoom = state;
+            viewer.scene.screenSpaceCameraController.enableLook = state;
+            viewer.scene.screenSpaceCameraController.enableTilt = state;
+            viewer.scene.screenSpaceCameraController.enableTranslate = state;
+        }
+
+
+        function updateEntity(entity, radius, maxHeight, angle) {
+
+            entity.radius = radius;
+            entity.maxHeight = maxHeight;
+            entity.angle = angle;
+            return entity;
+
+        }
+
+        function updatevalues(entity, properties) {
+            entity.directionAngle = properties;
+            return entity;
+        }
+
+        function createDraggableWaypoint(waypointPosition, weaponName, initialVelocity, viewer) {
+            let picked = false;
+
+            let positionCallback = () => {
+                return waypointPosition;
+            };
+
+            let positionCBP = new Cesium.CallbackProperty(positionCallback, false);
+            let myPoint = createCesiumPoint(positionCBP, weaponName, initialVelocity, 15, Cesium.Color.BLUE, Cesium
+                .Color.WHITE);
+
+            viewer.entities.add(myPoint);
+
+            //let handler = new Cesium.ScreenSpaceEventHandler(viewer.canvas);
+
+
+            handler.setInputAction((click) => {
+
+
+                let pickedObject = viewer.scene.pick(click.position);
+
+                if (Cesium.defined(pickedObject) &&
+                    pickedObject.id === myPoint
+                ) {
+                    picked = true;
+                    disableCameraMotion(false, viewer);
+                    pickedEntity = pickedObject.id;
+                    //}
+                    let value = pickedObject.id.position._property._values;
+                    let newEntity = {
+                        x: value[0],
+                        y: value[1],
+                        z: value[2]
+                    };
+                    document.getElementById('angle').value = pickedEntity.angle;
+                    document.getElementById('direction').value = pickedEntity.directionAngle;
+
+                    // update angle 
+                    let directionSlider = document.getElementById('direction');
+                    let angleSlider = document.getElementById('angle');
+                    let updateRadius = () => {
+
+                        let newEntityPropetry = change_theta(newEntity, angleSlider.value, pickedEntity);
+                        pickedEntity.position = newEntityPropetry.property;
+                        pickedEntity.position.setInterpolationOptions({
+                            interpolationDegree: 5,
+                            interpolationAlgorithm: Cesium.LagrangePolynomialApproximation
+                        });
+                        pickedEntity = updateEntity(pickedEntity, newEntityPropetry.range, newEntityPropetry
+                            .height, angleSlider.value);
+                    };
+
+                    angleSlider.addEventListener('input', updateRadius);
+
+                    // update direction /
+
+                    let updateDirection = () => {
+
+                        let newEntityPropetry1 = change_direction(newEntity, pickedEntity.radius,
+                            pickedEntity.maxHeight, directionSlider.value);
+
+                        console.log(newEntityPropetry1.property._property._values);
+                        console.log(newEntityPropetry1.newPos);
+                        var controls = [];
+                        controls.push(newEntityPropetry1.newPos.a)
+                        controls.push(newEntityPropetry1.newPos.b)
+                        controls.push(newEntityPropetry1.newPos.c)
+                        var spline = Cesium.HermiteSpline.createNaturalCubic({
+                            times: [0.0, 0.5, 1],
+                            points: controls,
+                        });
+
+                        var ppos = [];
+                        for (var i = 0; i <= 50; i++) {
+                            var cartesian3 = spline.evaluate(i / 50);
+                            ppos.push(cartesian3);
+                        }
+
+                        viewer.entities.add({
+                            name: "HermiteSpline",
+                            polyline: {
+                                positions: ppos,
+                                width: 3,
+                                material: Cesium.Color.RED,
+                            },
+                        });
+
+                        pickedEntity.position = newEntityPropetry1.property;
+                        pickedEntity.position.setInterpolationOptions({
+                            interpolationDegree: 5,
+                            interpolationAlgorithm: Cesium.LagrangePolynomialApproximation
+                        });
+
+                        pickedEntity = updatevalues(pickedEntity, directionSlider.value);
+                    };
+                    directionSlider.addEventListener('input', updateDirection);
+                }
+            }, Cesium.ScreenSpaceEventType.LEFT_DOWN);
+
+            handler.setInputAction(function (movement) {
+                if (!picked) {
+                    return;
+                }
+                var foundPosition = false;
+
+                scene.globe.depthTestAgainstTerrain = true;
+                waypointPosition = viewer.scene.drillPick(movement.endPosition);
+
+                //            waypointPosition = scene.pick(movement.endPosition);
+                if (scene.pickPositionSupported) {
+                    if (scene.mode === Cesium.SceneMode.SCENE3D) {
+                        var cartesian = viewer.scene.pickPosition(movement.endPosition);
+
+                        if (Cesium.defined(cartesian)) {
+                            var cartographic = Cesium.Cartographic.fromCartesian(cartesian);
+                            var longitudeString = Cesium.Math.toDegrees(cartographic.longitude).toFixed(3);
+                            var latitudeString = Cesium.Math.toDegrees(cartographic.latitude).toFixed(3);
+                            var heightString = cartographic.height.toFixed(2);
+
+                            waypointPosition = viewer.camera.pickEllipsoid(movement.endPosition, viewer.scene
+                                .globe.ellipsoid);
+
+                            let centerPoint = Cesium.Cartographic.fromCartesian(cartesian);
+
+
+                            let centerXYZ = Cesium.Cartographic.toCartesian(centerPoint);
+
+                            let initialVelocity = pickedEntity.initialVelocity;
+
+                            let verticalVelocity = initialVelocity * Math.sin(Cesium.Math.toRadians(pickedEntity
+                                .angle));
+                            let maxHeight = (verticalVelocity * verticalVelocity) / (2 * 9.8);
+                            let range = initialVelocity * initialVelocity * 2 * Math.sin(Cesium.Math.toRadians(
+                                    pickedEntity.angle)) * Math.cos(Cesium.Math.toRadians(pickedEntity.angle)) /
+                                9.8;
+
+                            let directionX = range * Math.cos(Cesium.Math.toRadians(pickedEntity
+                                .directionAngle));
+                            let directionY = range * Math.sin(Cesium.Math.toRadians(pickedEntity
+                                .directionAngle));
+
+                            let limitENU = new Cesium.Cartesian4(directionX, directionY, 0.0, 1.0);
+                            let total = maxHeight + parseInt(heightString);
+
+                            pickedEntity.position = getPositionProperty(centerXYZ, limitENU, total);
+                            pickedEntity.position.setInterpolationOptions({
+                                interpolationDegree: 5,
+                                interpolationAlgorithm: Cesium.LagrangePolynomialApproximation
+                            });
+
+                            var camera = scene.camera;
+                            pickedEntity.label.eyeOffset = new Cesium.Cartesian3(0.0, 0.0, camera.frustum.near *
+                                1.5 - Cesium.Cartesian3.distance(cartesian, camera.position));
+
+                            foundPosition = true;
+                        }
+                    } else if (!sceneModeWarningPosted) {
+                        sceneModeWarningPosted = true;
+                        console.log("pickPosition is currently only supported in 3D mode.");
+                    }
+                }
+
+                if (!foundPosition) {
+                    pickedEntity.label.show = false;
+                }
+            }, Cesium.ScreenSpaceEventType.MOUSE_MOVE);
+
+
+            handler.setInputAction((movement) => {
+                picked = false;
+                disableCameraMotion(true, viewer);
+                // console.log('leftup')
+            }, Cesium.ScreenSpaceEventType.LEFT_UP);
+
+            return myPoint;
+        }
+
+        function createCesiumPoint(coordinates, weaponName, initialVelocity, size, color) {
+            // get all points /
+            let centerPoint = Cesium.Cartographic.fromCartesian(coordinates.getValue());
+
+
+            var centerXYZ = Cesium.Cartographic.toCartesian(centerPoint);
+
+            // first phase /
+
+            let theta = 45;
+            // second phase /
+            let verticalVelocity = initialVelocity * Math.sin(Cesium.Math.toRadians(theta));
+            let maxHeight = (verticalVelocity * verticalVelocity) / (2 * 9.8);
+            let range = initialVelocity * initialVelocity * 2 * Math.sin(Cesium.Math.toRadians(theta)) * Math.cos(Cesium
+                .Math.toRadians(theta)) / 9.8;
+            let height = parseInt(maxHeight) + parseInt(centerPoint.height);
+
+
+            let limitENU = new Cesium.Cartesian4(range, 0.0, 0.0, 1.0);
+
+            //        document.getElementById("radius").value = range;
+            //        document.getElementById('height').value = maxHeight;
+
+
+            var iconmame = `${weaponName}.png`;
+
+            // creating entity /
+            let entity = new Cesium.Entity({
+                name: weaponName,
+                position: getPositionProperty(centerXYZ, limitENU, height),
+                point: {
+                    pixelSize: size,
+                    color: color,
+                    outlineColor: Cesium.Color.fromRandom({
+                        alpha: 1.0
+                    }),
+                    outlineWidth: 3
+                },
+                billboard: {
+                    image: `Sandcastle/images/${iconmame}`,
+                    heightReference: Cesium.HeightReference.CLAMP_TO_GROUND,
+                    disableDepthTestDistance: Number.POSITIVE_INFINITY,
+                    width: 50,
+                    height: 50
+                },
+                ellipse: {
+                    //                height: Cesium.HeightReference.CLAMP_TO_GROUND,
+                    heightReference: Cesium.HeightReference.CLAMP_TO_GROUND,
+                    semiMinorAxis: range,
+                    semiMajorAxis: range,
+                    outline: true,
+                    fill: true,
+                    material: new Cesium.Color(0, 0, 0, 0.5),
+                    outlineColor: Cesium.Color.DEEPSKYBLUE,
+                    outlineWidth: 5.0
+                },
+                label: {
+                    text: weaponName,
+                    font: '14pt monospace',
+                    style: Cesium.LabelStyle.FILL_AND_OUTLINE,
+                    outlineWidth: 2,
+                    verticalOrigin: Cesium.VerticalOrigin.BOTTOM,
+                    pixelOffset: new Cesium.Cartesian2(0, -9),
+                    heightReference: Cesium.HeightReference.CLAMP_TO_GROUND,
+                },
+                path: {
+                    resolution: 1200,
+                    material: new Cesium.PolylineGlowMaterialProperty({
+                        glowPower: 0.16,
+                        color: color
+                    }),
+                    width: 10,
+                    leadTime: 1e10,
+                    trailTime: 1e10,
+
+                },
+                showBackground: true,
+                horizontalOrigin: Cesium.HorizontalOrigin.LEFT,
+                verticalOrigin: Cesium.VerticalOrigin.TOP,
+                pixelOffset: new Cesium.Cartesian2(15, 0),
+                heightReference: Cesium.HeightReference.CLAMP_TO_GROUND,
+                angle: theta,
+                initialVelocity: initialVelocity,
+                maxHeight: height,
+                radius: range,
+                directionAngle: 0
+            });
+
+            if (weaponName == "r") {
+                entity.path.show = false;
+                entity.ellipse.show = false;
+            }
+
+            entity.position.setInterpolationOptions({
+                interpolationDegree: 5,
+                interpolationAlgorithm: Cesium.LagrangePolynomialApproximation
+            });
+
+            return entity;
+        }
+
+
+
+        function getPositionProperty(centerXYZ, limitENU, maxHeight) {
+
+            // We'll need the transformation from local coordinates to Earth-Centered, Earth-Fixed
+            var enuTransform = Cesium.Transforms.eastNorthUpToFixedFrame(centerXYZ);
+
+            viewer.clock.clockRange = Cesium.ClockRange.LOOP_STOP;
+
+            // Transform point in local coordinate system (East-North-Up) to ECEF
+            var limitECF = new Cesium.Cartesian4();
+            limitECF = Cesium.Matrix4.multiplyByVector(enuTransform, limitENU, limitECF);
+
+
+            var startTime = viewer.clock.startTime;
+            var midTime = Cesium.JulianDate.addSeconds(startTime, 43200, new Cesium.JulianDate());
+            let stopTime = Cesium.JulianDate.addSeconds(startTime, 86400, new Cesium.JulianDate());
+
+            var property = new Cesium.SampledPositionProperty();
+            property.addSample(startTime, centerXYZ);
+            property.addSample(stopTime, limitECF);
+
+            var midPoint = Cesium.Cartographic.fromCartesian(property.getValue(midTime));
+            midPoint.height = maxHeight;
+
+            var midPosition = viewer.scene.globe.ellipsoid.cartographicToCartesian(midPoint, new Cesium.Cartesian4());
+            property.addSample(startTime, centerXYZ);
+            property.addSample(midTime, midPosition);
+            property.addSample(stopTime, limitECF);
+
+            return property;
+        }
+    </script>
+
+    <script>
+        // let expanded = false;
+
+        // function showToolbox() {
+        //     var citydb_toolbox = document.getElementById("citydb_toolbox");
+        //     if (!expanded) {
+        //         citydb_toolbox.style.display = "block";
+        //         expanded = true;
+        //     } else {
+        //         citydb_toolbox.style.display = "none";
+        //         expanded = false;
+        //     }
+        // }
+        // var expanded2 = false;
+
+        // function showAddLayerPanel() {
+        //     var citydb_addlayerpanel = document.getElementById("citydb_addlayerpanel");
+        //     if (!expanded2) {
+        //         citydb_addlayerpanel.style.display = "block";
+        //         expanded2 = true;
+        //     } else {
+        //         citydb_addlayerpanel.style.display = "none";
+        //         expanded2 = false;
+        //     }
+        // }
+
+        $(".toolbar > .button").click(function () {
+            var $this = this;
+            document.querySelectorAll(".toolbar > .button.selected").forEach(el => {
+                if (el != this) {
+                    $(el).toggleClass("selected", false);
+                }
+
+            });
+            $(this).toggleClass("selected");
+            drawingMode = $(this).attr('data-type');
+            if (drawingMode == "deleteall") {
+                drawingToolEnabled = false;
+                deleteAll();
+                return;
+            }
+
+            if (drawingMode == "colorSelector") {
+                drawingToolEnabled = false;
+                return;
+            }
+            if ($(".toolbar > .button.selected").length > 0) {
+                drawingToolEnabled = true;
+            } else {
+                drawingToolEnabled = false;
+            }
+
+        });
+
+        var drawingToolEnabled = false;
+        var drawingMode = 'circle';
+        var firstPoint;
+        var activeShapePoints = [];
+        var activeShape;
+        var floatingPoint;
+        var idPotions = {};
+
+        function deleteAll() {
+            var entitys = viewer.entities._entities._array;
+            for (var i = 0; i < entitys.length; i++) {
+                if (entitys[i]._name === "dtshape") {
+                    viewer.entities.remove(entitys[i]);
+                    i--;
+                }
+            }
+        }
+
+        function createPoint(worldPosition) {
+            var point = viewer.entities.add({
+                position: worldPosition,
+                name: 'dtshape',
+                point: {
+                    color: Cesium.Color.WHITE,
+                    pixelSize: 5,
+                    heightReference: Cesium.HeightReference.CLAMP_TO_GROUND
+                }
+            });
+            return point;
+        }
+
+        function drawShape(positionData) {
+            var shape;
+            if (drawingMode === 'line') {
+                shape = viewer.entities.add({
+                    name: 'dtshape',
+                    polyline: {
+                        positions: positionData,
+                        clampToGround: true,
+                        width: 3,
+                        material: new Cesium.ColorMaterialProperty({
+                            red: selected_color.r,
+                            green: selected_color.g,
+                            blue: selected_color.b,
+                            alpha: selected_color.a
+                        }), //Cesium.Color.BLUE.withAlpha(0.5),
+                    }
+                });
+            } else if (drawingMode === 'polygon') {
+                shape = viewer.entities.add({
+                    name: 'dtshape',
+                    polygon: {
+                        hierarchy: positionData,
+                        material: new Cesium.ColorMaterialProperty({
+                            red: selected_color.r,
+                            green: selected_color.g,
+                            blue: selected_color.b,
+                            alpha: selected_color.a
+                        }) //(Cesium.Color.BLUE.withAlpha(0.7))
+                    }
+                });
+            } else if (drawingMode === 'circle') {
+                var start = activeShapePoints[0];
+                var end = activeShapePoints[activeShapePoints.length - 1];
+                // console.log(start.x);
+                // console.log(end.x);
+                var r = Math.sqrt(Math.pow(start.x - end.x, 2) + Math.pow(start.y - end.y, 2));
+                r = r ? r : r + 1;
+                shape = viewer.entities.add({
+                    position: activeShapePoints[0],
+                    name: 'dtshape',
+                    type: 'Selection tool',
+                    ellipse: {
+                        semiMinorAxis: new Cesium.CallbackProperty(function () {
+                            // let value = positionData.getValue(0);
+                            let value = typeof positionData.getValue === 'function' ? positionData
+                                .getValue(0) : positionData;
+                            var r = Math.sqrt(Math.pow(value[0].x - value[value.length - 1].x, 2) + Math
+                                .pow(value[0].y - value[value.length - 1].y, 2));
+                            return r ? r : r + 1;
+                        }, false),
+                        semiMajorAxis: new Cesium.CallbackProperty(function () {
+                            let value = typeof positionData.getValue === 'function' ? positionData
+                                .getValue(0) : positionData;
+                            var r = Math.sqrt(Math.pow(value[0].x - value[value.length - 1].x, 2) + Math
+                                .pow(value[0].y - value[value.length - 1].y, 2));
+                            return r ? r : r + 1;
+                        }, false),
+                        material: new Cesium.ColorMaterialProperty({
+                            red: selected_color.r,
+                            green: selected_color.g,
+                            blue: selected_color.b,
+                            alpha: selected_color.a
+                        }), //Cesium.Color.BLUE.withAlpha(0.5),
+                        outline: true
+                    }
+                });
+                idPotions[shape.id] = positionData;
+            }
+            return shape;
+        }
+
+
+        function drawingToolLeft(event) {
+            // We use `viewer.scene.pickPosition` here instead of `viewer.camera.pickEllipsoid` so that
+            // we get the correct point when mousing over terrain.
+            if (drawingToolEnabled) {
+                var earthPosition = viewer.scene.pickPosition(event.position);
+                // `earthPosition` will be undefined if our mouse is not over the globe.
+                if (Cesium.defined(earthPosition)) {
+                    if (activeShapePoints.length === 0) {
+                        floatingPoint = createPoint(earthPosition);
+                        firstPoint = floatingPoint;
+                        activeShapePoints.push(earthPosition);
+                        var dynamicPositions = new Cesium.CallbackProperty(function () {
+                            if (drawingMode == "polygon") {
+                                return new Cesium.PolygonHierarchy(activeShapePoints); //activeShapePoints;
+                            } else {
+                                return activeShapePoints;
+                            }
+                        }, false);
+                        activeShape = drawShape(dynamicPositions);
+                    }
+                    activeShapePoints.push(earthPosition);
+                    createPoint(earthPosition);
+                }
+            }
+        }
+
+        function drawingToolMove(event) {
+            if (drawingToolEnabled) {
+                if (Cesium.defined(floatingPoint)) {
+                    var newPosition = viewer.scene.pickPosition(event.endPosition);
+                    if (Cesium.defined(newPosition)) {
+                        floatingPoint.position.setValue(newPosition);
+                        activeShapePoints.pop();
+                        activeShapePoints.push(newPosition);
+                    }
+                }
+            }
+        }
+
+        // Redraw the shape so it's not dynamic and remove the dynamic shape.
+        function terminateShape() {
+            if (!drawingToolEnabled) return;
+            activeShapePoints.pop();
+            drawShape(activeShapePoints);
+            viewer.entities.remove(floatingPoint);
+            viewer.entities.remove(activeShape);
+            floatingPoint = undefined;
+            activeShape = undefined;
+            activeShapePoints = [];
+        }
+
+
+
+        var options = [{
+            text: 'Draw Lines',
+            onselect: function () {
+                terminateShape();
+                drawingMode = 'line';
+            }
+        }, {
+            text: 'Draw Polygons',
+            onselect: function () {
+                terminateShape();
+                drawingMode = 'polygon';
+            }
+        }, {
+            text: 'circle',
+            onselect: function () {
+                terminateShape();
+                drawingMode = 'circle';
+            }
+        }];
+
+        /* Meassurement Tools*/
+        let measure = new Cesium.Measure(viewer);
+        let sight = new Cesium.Sight(viewer);
+
+        let _drawLayer = new Cesium.CustomDataSource("entitiesLayer");
+
+        if (draggablesEnabled) {
+            let draggable = new Cesium.Draggable(viewer, {
+                drawLayer: _drawLayer,
+                toolbar: "markerProperty_toolbar"
+            });
+            draggable.drawEntity({
+                imgpath: '../Apps/img/cylinder.png',
+                description: "<strong>Helloo</strong>"
+            });
+        }
+
+        //new Cesium.Draggable(viewer, { drawLayer:_drawLayer, toolbar:  "markerProperty_toolbar"}).drawEntity({imgpath: '../Apps/img/cylinder.png', description: "<strong>Helloo</strong>"})
+        function toggleConfigurations() {
+            let configtb = document.getElementById("config_toolbar")
+            if (configtb.style.display == "block") {
+                configtb.style.display = "none";
+            } else {
+                configtb.style.display = "block";
+            }
+        }
+
+        function layerEntityPicked(layerEntity) {
+            console.log('layerEntityPicked', layerEntity._id);
+            $("#markerProperty_toolbar").css("display", "block");
+        }
+
+        function layerEntityUnPicked(layerEntity) {
+            console.log('layerEntityUnPicked');
+            $("#markerProperty_toolbar").css("display", "none");
+        }
+
+
+        let clampToGround = true;
+
+        function meassureThings(mType) {
+            switch (mType) {
+                case 'lineSight':
+                    sight.drawLineSight();
+                    break;
+                case 'Space distance':
+                    measure.drawLineMeasureGraphics({
+                        clampToGround: clampToGround,
+                        callback: () => {}
+                    });
+                    //measure.drawT_Triangle({});
+
+                    break;
+                case 'Space area':
+                    measure.drawAreaMeasureGraphics({
+                        clampToGround: clampToGround,
+                        callback: () => {}
+                    });
+                    break;
+                case 'Triangulation':
+                    measure.drawTrianglesMeasureGraphics({
+                        callback: () => {}
+                    });
+                    break;
+                case 'Clear':
+                    measure._drawLayer.entities.removeAll();
+                    sight.clearAll();
+                    break;
+            }
+        }
+
+        function toggleFPP(el) {
+            if ($(el).hasClass("selected")) {
+                firstPersonCameraController.stop();
+            } else {
+                firstPersonCameraController.start();
+            }
+        }
+
+        /* Contour1 Analysis*/
+        function toggleInspector() {
+            if ($(".cesium-viewer-cesiumInspectorContainer").css("display") == "none") {
+                $(".cesium-viewer-cesiumInspectorContainer")
+                    .css({
+                        "top": 'unset',
+                        "bottom": "65px",
+                        "display": "block"
+                    });
+            } else {
+                $(".cesium-viewer-cesiumInspectorContainer").css("display", "none");
+            }
+        }
+
+        let elevationAnalysis = new Cesium.ElevationAnalysis(viewer);
+        bindToolbar(elevationAnalysis.viewModel, "contour1_toolbar",
+            "elevationAnalysis.updateMaterial({ enabled: true })");
+
+        function toggleCounterAnalysis1(el) {
+            if ($(el).hasClass("selected")) {
+                document.getElementById("contour1_toolbar").style.display = "none";
+            } else {
+                $(".toolbaritem").css("display", "none");
+                document.getElementById("contour1_toolbar").style.display = "block";
+                elevationAnalysis.updateMaterial({
+                    enabled: true
+                });
+            }
+        }
+
+        /* Contour2 Analysis*/
+        function toggleCounterAnalysis2(el) {
+            if ($(el).hasClass("selected")) {
+                document.getElementById("contour2_toolbar").style.display = "none";
+            } else {
+                $(".toolbaritem").css("display", "none");
+                document.getElementById("contour2_toolbar").style.display = "block";
+                elevationAnalysis2.updateMaterial({
+                    enabled: true
+                });
+            }
+        }
+        let elevationAnalysis2 = new Cesium.ElevationAnalysis2(viewer);
+        bindToolbar2(elevationAnalysis2, "contour2_toolbar", "elevationAnalysis2.updateMaterial({ enabled: true })");
+
+        /* Imagery Adjustment*/
+        function toggleImageryAdjustment(el) {
+            if ($(el).hasClass("selected")) {
+                document.getElementById("imageryAdjustment_toolbar").style.display = "none";
+            } else {
+                $(".toolbaritem").css("display", "none");
+                document.getElementById("imageryAdjustment_toolbar").style.display = "block";
+                //elevationAnalysis2.updateMaterial({ enabled: true });
+            }
+        }
+
+        let imageryAdjustment = new Cesium.ImageryAdjustment(viewer);
+        bindToolbar3(imageryAdjustment, "imageryAdjustment_toolbar",
+            "imageryAdjustment.updateMaterial({ enabled: true })");
+
+
+        let viewshed3d = new Cesium.ViewShed(viewer);
+        bindToolbar(viewshed3d.viewModel, "viewshad3d_toolbar", "viewshed3d.update({ viewshade_enabled: true })");
+
+        function toggleVisibilityAnalysis(el) {
+            if ($(el).hasClass("selected")) {
+                document.getElementById("viewshad3d_toolbar").style.display = "none";
+                viewshed3d.update({
+                    viewshade_enabled: false
+                });
+            } else {
+                $(".toolbaritem").css("display", "none");
+                document.getElementById("viewshad3d_toolbar").style.display = "block";
+                viewshed3d.update({
+                    viewshade_enabled: true
+                });
+            }
+        }
+
+        function toggleVolumeMeasurement(el) {
+            if ($(el).hasClass("selected")) {
+                document.getElementById("volumemeasurement_toolbar").style.display = "none";
+                cesiumMeasurer.stopMeassure();
+            } else {
+                $(".toolbaritem").css("display", "none");
+                document.getElementById("volumemeasurement_toolbar").style.display = "block";
+                cesiumMeasurer.startDrawing({});
+            }
+        }
+
+        /* DOWNLOAD SNAPSHOT*/
+        function downloadSnapshot() {
+            // configure settings
+            var targetResolutionScale = 1.0; // for screenshots with higher resolution set to 2.0 or even 3.0
+            var timeout = 500; // in ms
+
+            var scene = viewer.scene;
+            if (!scene) {
+                console.error("No scene");
+            }
+
+            // define callback functions
+            var prepareScreenshot = function () {
+                var canvas = scene.canvas;
+                viewer.resolutionScale = targetResolutionScale;
+                scene.preRender.removeEventListener(prepareScreenshot);
+                // take snapshot after defined timeout to allow scene update (ie. loading data)
+                setTimeout(function () {
+                    scene.postRender.addEventListener(takeScreenshot);
+                }, timeout);
+            }
+
+            var takeScreenshot = function () {
+                scene.postRender.removeEventListener(takeScreenshot);
+                var canvas = scene.canvas;
+                canvas.toBlob(function (blob) {
+                    var url = URL.createObjectURL(blob);
+                    downloadURI(url, "snapshot-" + targetResolutionScale.toString() + "x.png");
+                    // reset resolutionScale
+                    viewer.resolutionScale = 1.0;
+                });
+            }
+
+            scene.preRender.addEventListener(prepareScreenshot);
+
+            function downloadURI(uri, name) {
+                var link = document.createElement("a");
+                link.download = name;
+                link.href = uri;
+                // mimic click on "download button"
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                delete link;
+            }
+        }
+
+
+        /* END */
+
+
+        /* WEATHER SECTION*/
+        /*
+                
+                var resetCameraFunction = function () {
+                    scene.camera.setView({
+                        destination: new Cesium.Cartesian3(
+                            277096.634865404,
+                            5647834.481964232,
+                            2985563.7039122293
+                        ),
+                        orientation: {
+                            heading: 4.731089976107251,
+                            pitch: -0.32003481981370063,
+                        },
+                    });
+                };
+                resetCameraFunction();
+                // scene.skyAtmosphere.hueShift = -0.8;
+                // scene.skyAtmosphere.saturationShift = -0.7;
+                // scene.skyAtmosphere.brightnessShift = -0.33;
+
+                scene.fog.density = 0.001;
+                scene.fog.minimumBrightness = 0.8;
+
+
+                function snowUpdate() {
+
+                }
+
+                // snow
+                var snowParticleSize = 12.0;
+                var snowRadius = 100000.0;
+                var minimumSnowImageSize = new Cesium.Cartesian2(
+                    snowParticleSize,
+                    snowParticleSize
+                );
+                var maximumSnowImageSize = new Cesium.Cartesian2(
+                    snowParticleSize * 2.0,
+                    snowParticleSize * 2.0
+                );
+                var snowSystem;
+
+                var snowGravityScratch = new Cesium.Cartesian3();
+                var snowUpdate = function (particle, dt) {
+                    snowGravityScratch = Cesium.Cartesian3.normalize(
+                        particle.position,
+                        snowGravityScratch
+                    );
+                    Cesium.Cartesian3.multiplyByScalar(
+                        snowGravityScratch,
+                        Cesium.Math.randomBetween(-30.0, -300.0),
+                        snowGravityScratch
+                    );
+                    particle.velocity = Cesium.Cartesian3.add(
+                        particle.velocity,
+                        snowGravityScratch,
+                        particle.velocity
+                    );
+
+                    var distance = Cesium.Cartesian3.distance(
+                        scene.camera.position,
+                        particle.position
+                    );
+                    if (distance > snowRadius) {
+                        particle.endColor.alpha = 0.0;
+                    } else {
+                        particle.endColor.alpha =
+                            snowSystem.endColor.alpha / (distance / snowRadius + 0.1);
+                    }
+                };
+
+                snowSystem = new Cesium.ParticleSystem({
+                    modelMatrix: new Cesium.Matrix4.fromTranslation(
+                        scene.camera.position
+                    ),
+                    minimumSpeed: -1.0,
+                    maximumSpeed: 0.0,
+                    lifetime: 15.0,
+                    emitter: new Cesium.SphereEmitter(snowRadius),
+                    startScale: 0.5,
+                    endScale: 1.0,
+                    image: "SampleData/snowflake_particle.png",
+                    emissionRate: 7000.0,
+                    startColor: Cesium.Color.WHITE.withAlpha(0.0),
+                    endColor: Cesium.Color.WHITE.withAlpha(1.0),
+                    minimumImageSize: minimumSnowImageSize,
+                    maximumImageSize: maximumSnowImageSize,
+                    updateCallback: snowUpdate,
+                });
+                scene.primitives.add(snowSystem);
+                /* END */
+
+
+        /* GLOBE CONFIG Toolbar*/
+        var configViewModel = {
+            globelightening: true,
+            globefog: false
+        };
+
+        function globeconfig_changed() {
+            console.log(configViewModel);
+            viewer.scene.globe.enableLighting = configViewModel.globelightening;
+            weathers.fog({
+                enabled: configViewModel.globefog
+            });
+        }
+        let weathers = Cesium.Weather(viewer);
+        bindToolbar(weathers.viewModal, "config_toolbar", "weathers.updateWeather();");
+        //viewer.scene.globe.enableLighting = configViewModel.globelightening;
+        /* END */
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Creator: CorelDRAW -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xml:space="preserve"
+   width="35.433071"
+   height="35.433071"
+   style="fill-rule:evenodd"
+   viewBox="0 0 0.39370079 0.39370077"
+   id="svg2"
+   version="1.1"
+   inkscape:version="0.48.4 r9939"
+   sodipodi:docname="0110101000113-Area.svg"><metadata
+   id="metadata22"><rdf:RDF><cc:Work
+       rdf:about=""><dc:format>image/svg+xml</dc:format><dc:type
+         rdf:resource="http://purl.org/dc/dcmitype/StillImage" /></cc:Work></rdf:RDF></metadata><sodipodi:namedview
+   pagecolor="#ffffff"
+   bordercolor="#666666"
+   borderopacity="1"
+   objecttolerance="10"
+   gridtolerance="10"
+   guidetolerance="10"
+   inkscape:pageopacity="0"
+   inkscape:pageshadow="2"
+   inkscape:window-width="981"
+   inkscape:window-height="639"
+   id="namedview20"
+   showgrid="false"
+   inkscape:zoom="6.6604408"
+   inkscape:cx="17.716545"
+   inkscape:cy="21.166003"
+   inkscape:window-x="0"
+   inkscape:window-y="0"
+   inkscape:window-maximized="0"
+   inkscape:current-layer="svg2"
+   units="mm" />
+ <defs
+   id="defs4">
+  <style
+   type="text/css"
+   id="style6">
+   
+    .str0 {stroke:blue;stroke-width:0.0206457}
+    .str1 {stroke:blue;stroke-width:0.0206457;stroke-linecap:round}
+    .fil0 {fill:none}
+   
+  </style>
+ </defs>
+ <g
+   id="Layer_x0020_1"
+   transform="matrix(0.90021192,0,0,0.91669681,0.02781081,0.01801827)">
+  <metadata
+   id="CorelCorpID_0Corel-Layer" />
+  <polygon
+   class="fil0 str0"
+   points="0.382953,0.389839 -0.00660236,0.389839 -0.00660236,0.11715 0.382953,0.11715 0.267256,0.260118 "
+   id="polygon10"
+   style="fill:none;stroke:#0000ff;stroke-width:0.02267629" />
+  <line
+   class="fil0 str1"
+   x1="0.21310601"
+   y1="0.00028346499"
+   x2="0.29686201"
+   y2="0.089492097"
+   id="line12"
+   style="fill:none;stroke:#0000ff;stroke-width:0.02267629;stroke-linecap:round" />
+  <line
+   class="fil0 str1"
+   x1="0.29647201"
+   y1="-0.000106299"
+   x2="0.21310601"
+   y2="0.089881897"
+   id="line14"
+   style="fill:none;stroke:#0000ff;stroke-width:0.02267629;stroke-linecap:round" />
+  <line
+   class="fil0 str1"
+   x1="0.079878002"
+   y1="0.00028346499"
+   x2="0.163634"
+   y2="0.089492097"
+   id="line16"
+   style="fill:none;stroke:#0000ff;stroke-width:0.02267629;stroke-linecap:round" />
+  <line
+   class="fil0 str1"
+   x1="0.163634"
+   y1="-0.000106299"
+   x2="0.080267698"
+   y2="0.089881897"
+   id="line18"
+   style="fill:none;stroke:#0000ff;stroke-width:0.02267629;stroke-linecap:round" />
+ </g>
+</svg>
